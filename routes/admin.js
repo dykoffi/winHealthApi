@@ -3,7 +3,7 @@ const client = require('../constants/connection')
 const { headers, status } = require('../constants/query')
 
 const { add_droit_profil, add_log, add_profil, add_user } = require('../apps/admin/api/add')
-const { list_droits, list_profils, list_logs, list_users } = require('../apps/admin/api/list')
+const { list_droits, list_profils, list_logs, list_users, details_profil, search_profil } = require('../apps/admin/api/list')
 
 router
     .get('/list/droits', function (req, res) {
@@ -34,6 +34,21 @@ router
             res.json(result)
         })
     })
+    .get('/details/profil/:id', function (req, res) {
+        client.query(details_profil, [req.params.id], (err, result) => {
+            res.header(headers)
+            res.status(status)
+            res.json(result)
+        })
+    })
+    .get('/search/profil/:mot', function (req, res) {
+        client.query(search_profil, [req.params.mot], (err, result) => {
+            err && console.log(err)
+            res.header(headers)
+            res.status(status)
+            res.json(result)
+        })
+    })
 
 
 
@@ -46,15 +61,23 @@ router
         //destructuration et recuperation des varibles
         const { labelProfil, dateProfil, auteurProfil, droits } = body
         client.query(add_profil, [labelProfil, auteurProfil, dateProfil], (err, result) => {
-            //si l'insertion se passe bien on a un tableau qui
-            if (result.rows[0].idprofil) {
-                droits.forEach((codedroit) => {
-                    client.query(droitprofil, [result.rows[0].idprofil, codedroit], (err, result) => {
-                        res.header(headers)
-                        res.status(status)
-                        err ? console.log(err) : console.log(result.rows[0])
+            if (err) {
+                console.log(err)
+            } else {
+                //si l'insertion se passe bien on a un tableau qui
+                if (result.rows[0].idprofil) {
+                    droits.forEach((codedroit, i) => {
+                        client.query(add_droit_profil, [result.rows[0].idprofil, codedroit], (err, result) => {
+                            if (err) { console.log(err) } else {
+                                if (i === droits.length - 1) {
+                                    res.header(headers)
+                                    res.status(status)
+                                    res.json(result)
+                                }
+                            }
+                        })
                     })
-                })
+                }
             }
         })
     })

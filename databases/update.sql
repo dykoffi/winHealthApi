@@ -14,7 +14,7 @@ CREATE TABLE Profils (
     idProfil SERIAL,
     labelProfil VARCHAR(100),
     auteurProfil VARCHAR(30),
-    dateProfil VARCHAR(20),
+    dateProfil VARCHAR(100),
     UNIQUE (labelProfil)
 );
 
@@ -24,4 +24,4 @@ CREATE TABLE Droit_Profil (
     codeDroit VARCHAR(10)
 );
 
-\i databases/insert.sql
+\i insert.sql
