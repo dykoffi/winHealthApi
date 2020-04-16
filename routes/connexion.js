@@ -7,16 +7,20 @@ const { verify_user } = require('../apps/connexion/api/verify')
 
 
 router
-    .post('/verify/user', function (req, res, next) {
+    .post('/verify/user', function (req, res) {
         const body = JSON.parse(Object.keys(req.body)[0])
+        console.log(body);
+
         const { login, pass } = body
         client.query(verify_user, [login, pass], function (err, result) {
-            res.header(headers)
-            res.status(status)
-            const [user] = result.rows
-            if (user !== undefined) {
-                res.json(user)
-            } else { res.json(false) }
+            if (err) { console.log(err) } else {
+                res.header(headers)
+                res.status(status)
+                const [user] = result.rows
+                if (user !== undefined) {
+                    res.json(user)
+                } else { res.json(false) }
+            }
         })
     })
 module.exports = router
