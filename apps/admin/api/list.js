@@ -19,6 +19,16 @@ exports.list_users = {
     text: "SELECT * FROM Users"
 }
 
+exports.list_apps = {
+    name: "list_apps",
+    text: "SELECT * FROM Apps"
+}
+
+exports.list_profils_by_app = {
+    name: "list_profils_by_app",
+    text: "SELECT * FROM Profils WHERE appProfil = $1"
+}
+
 exports.details_profil = {
     name: "details_profil",
     text: "SELECT labelProfil, dateProfil, auteurProfil, Droits.codeDroit, labelDroit FROM profils, droit_profil, droits WHERE profils.idProfil=droit_profil.idProfil AND droit_profil.codedroit=droits.codedroit AND  profils.idprofil=$1"
