@@ -97,7 +97,7 @@ io.sockets.on("connection", function (socket, pseudo) {
         })
     })
 })
-
+console.log(process.env.DATABASE_URL)
 console.log(`start on port : ${port}`);
 
 module.exports = io

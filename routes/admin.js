@@ -4,7 +4,7 @@ const { headers, status } = require("../constants/query");
 
 const {
     add_droit_profil,
-    add_profil,
+    add_profil_in_app,
 } = require("../apps/admin/api/add");
 
 const {
@@ -65,18 +65,19 @@ router
     //Ajouter un profil dans une application
     .post("/add/:app/profil", (req, res) => {
         //deserialisation de l'objet recu par la methode post
-        const { app } = req.params;
+        const { app : codeApp } = req.params;
         const body = JSON.parse(Object.keys(req.body)[0]);
 
         //destructuration et recuperation des varibles
         const { labelProfil, dateProfil, auteurProfil, droits } = body;
         client.query(
-            add_profil,
-            [labelProfil, auteurProfil, dateProfil],
+            add_profil_in_app,
+            [labelProfil, auteurProfil, dateProfil, codeApp],
             (err, result) => {
                 if (err) {
                     res.header(headers);
                     res.status(status);
+                    console.log(err);
                     res.json(err);
                 } else {
                     //si l'insertion se passe bien on a un tableau qui

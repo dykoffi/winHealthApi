@@ -1,5 +1,5 @@
-INSERT INTO Users(nom, prenoms,contact,mail, poste, profil, codeApp, pass) VALUES 
-('ALTEA','CI','51 88 64 78','winhealth@altea-ci.com', 'Agent ALTEA', 'ADMIN','COAP006','@winhealth@');
+INSERT INTO Users(nom, prenoms,contact,mail, poste, profil, codeapp, pass) VALUES 
+('ALTEA','CI','51 88 64 78','winhealth@altea-ci.com', 'Agent ALTEA', 'ADMIN','COAP004','@winhealth@');
 
 INSERT INTO Droits(codeDroit,codeApp, labelDroit) VALUES
 ('CODR001','COAP001','Creation de patient'),
@@ -20,7 +20,5 @@ INSERT INTO Apps(codeApp, nomApp, descApp) VALUES
 ('COAP001','GAP','Gestion administrative du patient'),
 ('COAP002','DPI','Dossier patient informatisé'),
 ('COAP003','PUI','Pharmacie à usage interne'),
-('COAP004','LIMS','Gestion du systeme d informatoins du laboratoire'),
-('COAP005','RIS','Systeme d information de la radiologie'),
-('COAP006','ADMIN','Administrateur du systeme');
+('COAP004','ADMIN','Administrateur du systeme');
 
