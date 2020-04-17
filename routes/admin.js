@@ -14,6 +14,7 @@ const {
     list_droits_by_app,
     details_profil_by_app,
     search_profil_by_app,
+    strict_search_profil_by_app
 } = require("../apps/admin/api/list");
 
 router
@@ -62,6 +63,15 @@ router
     .get("/search/:app/profil/:mot", function (req, res) {
         const { app } = req.params;
         client.query(search_profil_by_app, [app, req.params.mot], (err, result) => {
+            err && console.log(err);
+            res.header(headers);
+            res.status(status);
+            res.json(result);
+        });
+    })
+    .get("/strictsearch/:app/profil/:mot", function (req, res) {
+        const { app } = req.params;
+        client.query(strict_search_profil_by_app, [app, req.params.mot], (err, result) => {
             err && console.log(err);
             res.header(headers);
             res.status(status);

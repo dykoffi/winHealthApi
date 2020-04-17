@@ -72,30 +72,11 @@ function onListening() {
         'port ' + addr.port;
     debug('Listening on ' + bind);
 }
-const { Client } = require('pg')
-const client = new Client({
-    user: 'oscav',
-    host: 'localhost',
-    database: 'mytest',
-    password: '1234',
-    port: 5432,
-})
-
-client.connect()
-
-const query = {
-    name: 'fetch-user',
-    text: `SELECT *FROM temps`
-}
 
 const io = require("socket.io").listen(server)
 io.sockets.on("connection", function (socket, pseudo) {
     console.log("un user c'est connecte")
-    socket.on("getData", ()=>{
-        client.query(query, (err, res) => {
-            socket.emit("dataOk",res.rows)
-        })
-    })
+    
 })
 console.log(`start on port : ${port}`);
 

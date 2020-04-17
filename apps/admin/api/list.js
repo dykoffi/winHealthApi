@@ -24,6 +24,11 @@ exports.search_profil_by_app = {
     text: "SELECT * FROM Profils WHERE  codeApp = $1 AND labelprofil ~* $2 ORDER BY labelProfil"
 }
 
+exports.strict_search_profil_by_app = {
+    name: "strict_search_profil_by_app",
+    text: "SELECT * FROM Profils WHERE  codeApp = $1 AND labelprofil=$2"
+}
+
 exports.details_profil_by_app = {
     name: "details_profil_by_app",
     text: "SELECT labelProfil, dateProfil, auteurProfil, Droits.codeDroit, labelDroit FROM profils, droit_profil, droits WHERE profils.idProfil=droit_profil.idProfil AND droit_profil.codedroit=droits.codedroit AND  profils.idprofil=$1"
