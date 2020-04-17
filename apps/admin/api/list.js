@@ -14,6 +14,11 @@ exports.list_profils_by_app = {
     text: "SELECT * FROM Profils WHERE codeApp = $1 ORDER BY labelProfil"
 }
 
+exports.list_all_profils = {
+    name: "list_all_profils",
+    text: "SELECT * FROM Profils ORDER BY labelProfil"
+}
+
 exports.search_profil_by_app = {
     name: "search_profil_by_app",
     text: "SELECT * FROM Profils WHERE  codeApp = $1 AND labelprofil ~* $2 ORDER BY labelProfil"

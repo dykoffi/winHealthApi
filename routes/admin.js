@@ -10,6 +10,7 @@ const {
 const {
     list_apps,
     list_profils_by_app,
+    list_all_profils,
     list_droits_by_app,
     details_profil_by_app,
     search_profil_by_app,
@@ -29,6 +30,13 @@ router
     .get("/list/:app/profils", function (req, res) {
         const { app } = req.params;
         client.query(list_profils_by_app, [app], (err, result) => {
+            res.header(headers);
+            res.status(status);
+            res.json(result);
+        });
+    })
+    .get("/list/profils", function (req, res) {
+        client.query(list_all_profils, (err, result) => {
             res.header(headers);
             res.status(status);
             res.json(result);
