@@ -2,7 +2,7 @@
 
 exports.add_profil_in_app = {
     name: "add_profil_in_app",
-    text: "INSERT INTO Profils(labelProfil,auteurProfil,dateProfil,codeApp) VALUES ($1,$2,$3,$4) RETURNING idProfil"
+    text: "INSERT INTO Profils(labelProfil,auteurProfil,dateProfil,codeApp) VALUES ($1,$2,$3,$4) RETURNING idProfil, labelProfil"
 }
 
 exports.add_user = {

@@ -18,7 +18,7 @@ CREATE TABLE Users (
     mail VARCHAR(30),
     poste VARCHAR(100),
     profil VARCHAR(100),
-    codeApp VARCHAR(30),
+    codeApp VARCHAR(15),
     pass VARCHAR(200)
 );
 
@@ -32,7 +32,7 @@ CREATE TABLE Apps (
 CREATE TABLE Droits(
     idDroit SERIAL PRIMARY KEY,
     codeDroit VARCHAR(10),
-    codeApp VARCHAR(10),
+    codeApp VARCHAR(15),
     labelDroit VARCHAR(100)
 );
 
@@ -41,7 +41,7 @@ CREATE TABLE Profils (
     labelProfil VARCHAR(100),
     auteurProfil VARCHAR(30),
     dateProfil VARCHAR(100),
-    codeApp VARCHAR(100),
+    codeApp VARCHAR(15),
     UNIQUE (labelProfil)
 );
 
@@ -53,9 +53,11 @@ CREATE TABLE Droit_Profil (
 
 CREATE TABLE Logs (
     idLogs SERIAL PRIMARY KEY,
-    actionLog VARCHAR(150),
+    typeLog VARCHAR (200),
     auteurLog VARCHAR(50),
-    dateLog VARCHAR(30)
+    actionLog VARCHAR(150),
+    dateLog VARCHAR(50),
+    codeApp VARCHAR(15)
 );
 
 \i insert.sql

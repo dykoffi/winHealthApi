@@ -7,13 +7,12 @@ if (process.env.DATABASE_URL) {
     });
 } else {
     client = new Client({
-        user: 'oscav',
+        user: 'edy',
         host: 'localhost',
         database: 'mytest',
-        password: '1234',
-        port: 5432,
+        password: '7859'
     })
 }
-client.connect()
+client.connect((err)=>{err && console.log(err)})
 
 module.exports = client

@@ -1,0 +1,1 @@
+exports.CONNEXION_SERVEUR = "Connexion au serveur"
