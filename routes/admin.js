@@ -121,7 +121,6 @@ router
     //Ajouter un profil dans une application
     .post("/add/:app/profil", (req, res) => {
         //deserialisation de l'objet recu par la methode post
-
         const { userMail, app } = req.query
         const { app: codeApp } = req.params;
         const body = JSON.parse(Object.keys(req.body)[0]);
@@ -150,7 +149,7 @@ router
                                         console.log(err);
                                     } else {
                                         if (i === droits.length - 1) {
-                                            addLog(client, CREATION, userMail, CREATION__PROFIL + " " + labelprofil, moment().format("dddd DD MMMM YYYY HH:mm:ss"), app)
+                                            addLog(client, CREATION, userMail, CREATION__PROFIL + " " + labelprofil, moment().format("DD MMMM YYYY"),moment().format("HH:mm:ss"), app)
                                             res.header(headers);
                                             res.status(status);
                                             res.json(result);

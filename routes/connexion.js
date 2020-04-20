@@ -19,7 +19,7 @@ router
                 res.status(status)
                 const [user] = result.rows
                 if (user !== undefined) {
-                    addLog(client, CONNEXION, user.mail, CONNEXION_SERVEUR, moment().format("dddd DD MMMM YYYY HH:mm:ss"), user.codeapp)
+                    addLog(client, CONNEXION, user.mail, CONNEXION_SERVEUR, moment().format("DD MMMM YYYY"),moment().format("HH:mm:ss"), user.codeapp)
                     res.json(user)
                 } else { res.json(false) }
             }

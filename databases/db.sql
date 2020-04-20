@@ -57,6 +57,7 @@ CREATE TABLE Logs (
     auteurLog VARCHAR(50),
     actionLog VARCHAR(150),
     dateLog VARCHAR(50),
+    heureLog VARCHAR(50),
     codeApp VARCHAR(15)
 );
 
