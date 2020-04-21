@@ -31,7 +31,7 @@ exports.strict_search_profil_by_app = {
 
 exports.details_profil_by_app = {
     name: "details_profil_by_app",
-    text: "SELECT labelProfil, dateProfil, auteurProfil, Droits.codeDroit, labelDroit FROM profils, droit_profil, droits WHERE profils.idProfil=droit_profil.idProfil AND droit_profil.codedroit=droits.codedroit AND  profils.idprofil=$1"
+    text: "SELECT profils.idProfil, labelProfil, dateProfil, auteurProfil, Droits.codeDroit, labelDroit FROM profils, droit_profil, droits WHERE profils.idProfil=droit_profil.idProfil AND droit_profil.codedroit=droits.codedroit AND  profils.idprofil=$1"
 }
 
 exports.list_all_logs = {

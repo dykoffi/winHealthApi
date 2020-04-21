@@ -4,8 +4,8 @@ const moment = require('moment')
 
 const { headers, status } = require("../constants/query");
 const { addLog } = require('../apps/global/add')
-const { CREATION } = require('../apps/global/logTypes')
-const { CREATION__PROFIL } = require('../apps/admin/logs/actions')
+const { CREATION, SUPPRESSION } = require('../apps/global/logTypes')
+const { CREATION_PROFIL, SUPPRESSION_PROFIL } = require('../apps/admin/logs/actions')
 
 const {
     add_droit_profil,
@@ -24,6 +24,8 @@ const {
     list_logs_by_app_and_type,
     list_logs_users
 } = require("../apps/admin/api/list");
+
+const { delete_profil, delete_droit_profil } = require("../apps/admin/api/delete");
 
 moment.locale('fr')
 
@@ -64,6 +66,7 @@ router
     })
     .get("/details/profil/:id", function (req, res) {
         client.query(details_profil_by_app, [req.params.id], (err, result) => {
+            err && console.log(err);
             res.header(headers);
             res.status(status);
             res.json(result);
@@ -116,6 +119,36 @@ router
         });
     })
 
+router
+    //supprimer un profil
+    .get("/delete/:app/profil/:idprofil", (req, res) => {
+        const { userMail, app, profil } = req.query
+        const { idprofil } = req.params
+        client.query(delete_profil, [idprofil], (err, result) => {
+            const { labelprofil } = result.rows[0]
+            if (err) {
+                res.header(headers);
+                res.status(status);
+                console.log(err);
+                res.json(err);
+            } else {
+                client.query(delete_droit_profil, [idprofil], (err, result) => {
+                    if (err) {
+                        res.header(headers);
+                        res.status(status);
+                        console.log(err);
+                        res.json(err);
+                    } else {
+                        addLog(client, SUPPRESSION, userMail, SUPPRESSION_PROFIL + " " + labelprofil, moment().format("DD MMMM YYYY"), moment().format("HH:mm:ss"), app)
+                        res.header(headers);
+                        res.status(status);
+                        res.json(result);
+                    }
+                })
+
+            }
+        })
+    })
 
 router
     //Ajouter un profil dans une application
@@ -149,7 +182,7 @@ router
                                         console.log(err);
                                     } else {
                                         if (i === droits.length - 1) {
-                                            addLog(client, CREATION, userMail, CREATION__PROFIL + " " + labelprofil, moment().format("DD MMMM YYYY"),moment().format("HH:mm:ss"), app)
+                                            addLog(client, CREATION, userMail, CREATION_PROFIL + " " + labelprofil, moment().format("DD MMMM YYYY"), moment().format("HH:mm:ss"), app)
                                             res.header(headers);
                                             res.status(status);
                                             res.json(result);
