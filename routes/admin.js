@@ -122,7 +122,7 @@ router
 router
     //supprimer un profil
     .get("/delete/:app/profil/:idprofil", (req, res) => {
-        const { userMail, app, profil } = req.query
+        const { userMail, app } = req.query
         const { idprofil } = req.params
         client.query(delete_profil, [idprofil], (err, result) => {
             const { labelprofil } = result.rows[0]

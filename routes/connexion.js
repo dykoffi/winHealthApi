@@ -7,6 +7,16 @@ const { CONNEXION_SERVEUR } = require('../apps/connexion/logs/actions')
 const { addLog } = require('../apps/global/add')
 const { CONNEXION } = require('../apps/global/logTypes')
 
+const crypto = require('crypto')
+
+function hash(mot){
+    const hash = crypto.createHmac('sha512', secret)
+    .digest('hex');
+
+    return hash
+}
+
+
 moment.locale('fr')
 
 router
@@ -19,7 +29,7 @@ router
                 res.status(status)
                 const [user] = result.rows
                 if (user !== undefined) {
-                    addLog(client, CONNEXION, user.mail, CONNEXION_SERVEUR, moment().format("DD MMMM YYYY"),moment().format("HH:mm:ss"), user.codeapp)
+                    addLog(client, CONNEXION, user.mailuser, CONNEXION_SERVEUR, moment().format("DD MMMM YYYY"),moment().format("HH:mm:ss"), user.codeapp)
                     res.json(user)
                 } else { res.json(false) }
             }

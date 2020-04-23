@@ -11,15 +11,15 @@ DROP TABLE Logs;
 DROP TABLE Apps;
 
 CREATE TABLE Users (
-    id SERIAL PRIMARY KEY,
-    nom VARCHAR(20),
-    prenoms VARCHAR(50),
-    contact VARCHAR(20),
-    mail VARCHAR(30),
-    poste VARCHAR(100),
-    profil VARCHAR(100),
+    idUser SERIAL PRIMARY KEY,
+    nomUser VARCHAR(20),
+    prenomsUser VARCHAR(50),
+    contactUser VARCHAR(20),
+    mailUser VARCHAR(30),
+    posteUser VARCHAR(100),
+    profilUser VARCHAR(100),
     codeApp VARCHAR(15),
-    pass VARCHAR(200)
+    passUser VARCHAR(200)
 );
 
 CREATE TABLE Apps (

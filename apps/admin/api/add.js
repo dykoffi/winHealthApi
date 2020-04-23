@@ -7,7 +7,7 @@ exports.add_profil_in_app = {
 
 exports.add_user = {
     name: "add_user",
-    text: "INSERT INTO Users VALUES()"
+    text: "INSERT INTO Users(nomUser, prenomsUser, contactUser, mailUser, posteUser, profilUser, codeApp, passUser) VALUES($1,$2,$3,$4,$5,$6,$7,$8)"
 }
 
 exports.add_log = {

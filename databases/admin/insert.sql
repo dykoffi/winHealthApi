@@ -1,4 +1,4 @@
-INSERT INTO Users(nom, prenoms,contact,mail, poste, profil, codeapp, pass) VALUES 
+INSERT INTO Users(nomUser, prenomsUser,contactUser,mailUser, posteUser, profilUser, codeapp, passUser) VALUES 
 ('ALTEA','CI','51 88 64 78','winhealth@altea-ci.com', 'Agent ALTEA', 'ADMIN','COAP004','@winhealth@');
 
 INSERT INTO Droits(codeDroit,codeApp, labelDroit) VALUES
