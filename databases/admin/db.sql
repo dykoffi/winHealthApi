@@ -17,9 +17,10 @@ CREATE TABLE Users (
     contactUser VARCHAR(20),
     mailUser VARCHAR(30),
     posteUser VARCHAR(100),
-    profilUser VARCHAR(100),
+    profilUser INTEGER,
     codeApp VARCHAR(15),
-    passUser VARCHAR(200)
+    loginUser VARCHAR(100),
+    passUser VARCHAR(255)
 );
 
 CREATE TABLE Apps (
