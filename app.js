@@ -6,6 +6,7 @@ const cookieparser = require('cookie-parser')
 //definition des routes des applications
 const connexion_router = require('./routes/connexion')
 const admin_router = require('./routes/admin')
+const gap_router = require('./routes/gap')
 
 const app = express();
  
@@ -17,6 +18,7 @@ app.use(cookieparser())
 //utilisation des routes des applications
 app.use('/connexion', connexion_router)
 app.use('/admin', admin_router)
+app.use('/gap', gap_router)
 
 
 // catch 404 and forward to error handler
