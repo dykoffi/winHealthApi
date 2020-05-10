@@ -16,11 +16,11 @@ function hash(mot){
     return hash
 }
 
-
 moment.locale('fr')
 
 router
     .post('/verify/user', function (req, res) {
+        console.log(req.ip)
         const body = JSON.parse(Object.keys(req.body)[0])
         const { login, pass } = body
         client.query(verify_user, [login, hash(pass)], function (err, result) {
