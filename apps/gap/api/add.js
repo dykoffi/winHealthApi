@@ -13,19 +13,19 @@ exports.add_sejour = {
                 statusSejour , 
                 typeSejour, 
                 patientSejour,
-                etablissementSejour
-                ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`
+                etablissementSejour,
+                factureSejour
+                ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`
 }
 
 exports.add_facture = {
     name: "add_facture",
     text: `INSERT INTO gap.Factures (
-                dateDebutSejour ,
-                dateFinSejour  ,
-                typeSejour , 
-                statusSejour , 
-                patientSejour ,
-                etablissementSejour ,
-                factureSejour
-                ) VALUES ($1,$2,$3,$4,$5,$6,)`
+                numeroFacture,
+                dateFacture,
+                heureFacture,
+                auteurFacture,
+                acteFacture
+                ) VALUES ($1,$2,$3,$4,$5)
+                RETURNING idFacture`
 } 

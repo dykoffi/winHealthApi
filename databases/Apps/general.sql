@@ -21,9 +21,10 @@ CREATE TABLE general.Personnel (idActe SERIAL PRIMARY KEY);
 
 CREATE TABLE general.Actes (
     idActe SERIAL PRIMARY KEY,
-    codeActe VARCHAR(30),
+    codeActe VARCHAR(30) UNIQUE,
+    lettreCleActe VARCHAR(10),
     typeActe VARCHAR(100),
-    libelle VARCHAR(200),
+    libelleActe VARCHAR(200),
     regroupementActe VARCHAR(10),
     cotationActe VARCHAR(10),
     prixActe VARCHAR(20)

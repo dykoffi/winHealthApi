@@ -67,11 +67,13 @@ CREATE TABLE gap.DossierParamedical (
 
 CREATE TABLE gap.Factures (
     idFacture SERIAL PRIMARY KEY,
-    numeroFacture INTEGER,
-    dateFacture DATE,
-    heureFacture TIME,
-    auteurFacture INTEGER REFERENCES public.Users (idUser)
+    numeroFacture VARCHAR(100),
+    dateFacture VARCHAR(20),
+    heureFacture VARCHAR(10),
+    auteurFacture VARCHAR(100),
+    acteFacture VARCHAR(20) REFERENCES general.Actes (codeActe)
 );
+
 
 CREATE TABLE gap.Sejours (
     idSejour SERIAL PRIMARY KEY,
