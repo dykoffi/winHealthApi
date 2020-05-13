@@ -76,8 +76,12 @@ function onListening() {
 const io = require("socket.io").listen(server)
 io.sockets.on("connection", function (socket, pseudo) {
     console.log("un user c'est connecte")
-    
+    socket.on("facture_encaisser", ({ sejour, patient }) => {
+        socket.broadcast.emit("facture_encaisser", { sejour, patient })
+    })
+
 })
+
 console.log(`start on port : ${port}`);
 
 module.exports = io
