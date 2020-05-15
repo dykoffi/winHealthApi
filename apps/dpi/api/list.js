@@ -1,5 +1,5 @@
-exports.list_attente_patients = {
-    name: "list_attente_patient",
+exports.list_attente_soins = {
+    name: "list_attente_soins",
     text: `SELECT 
     idDossier, 
     ippPatient, 
@@ -13,11 +13,38 @@ exports.list_attente_patients = {
     contactPatient,
     typeSejour,
     idSejour,
+    idFacture,
     dateFacture,
     heureFacture
     FROM gap.DossierAdministratif, gap.Sejours, gap.Factures WHERE 
     Sejours.patientSejour=iddossier AND
     Sejours.statusSejour='validé' AND
+    Sejours.FactureSejour=idFacture
+    ORDER BY idSejour ASC
+    `
+}
+
+exports.list_attente_consultations = {
+    name: "list_attente_consultations",
+    text: `SELECT 
+    idDossier, 
+    ippPatient, 
+    nomPatient, 
+    prenomsPatient, 
+    sexePatient, 
+    dateNaissancePatient, 
+    lieuNaissancePatient, 
+    nationalitePatient,
+    habitationPatient, 
+    contactPatient,
+    typeSejour,
+    idSejour,
+    idFacture,
+    dateFacture,
+    heureFacture
+    FROM gap.DossierAdministratif, gap.Sejours, gap.Factures WHERE 
+    Sejours.patientSejour=iddossier AND
+    Sejours.statusSejour='medecin' AND
     Sejours.FactureSejour=idFacture
     ORDER BY idSejour ASC
     `

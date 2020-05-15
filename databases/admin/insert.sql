@@ -1,7 +1,12 @@
 INSERT INTO Users(nomUser, prenomsUser,contactUser,mailUser, posteUser, profilUser, codeapp,loginUser, passUser) VALUES 
 -- ('ALTEA','CI','51 88 64 78','winhealth@altea-ci.com', 'Agent ALTEA', 1,'COAP004','admin','47dfbc37d2577197c6db50e5e52693a27dee2f3725671e2bb917f9b38fd44795'),
-('Edy','Koffi','51 88 64 78','winhealth@altea-ci.com', 'Agent ALTEA DPI', 2,'COAP002','dpi','47dfbc37d2577197c6db50e5e52693a27dee2f3725671e2bb917f9b38fd44795');
+-- ('Edy','Koffi','51 88 64 78','winhealth@altea-ci.com', 'Agent ALTEA DPI', 2,'COAP002','dpi','47dfbc37d2577197c6db50e5e52693a27dee2f3725671e2bb917f9b38fd44795');
 
+('GBADJE','Wilfried','51 88 64 78','wilfried@altea-ci.com', 'Infirmier', 2,'COAP002','wilfried','47dfbc37d2577197c6db50e5e52693a27dee2f3725671e2bb917f9b38fd44795'),
+('Abdoul','N DONGO','51 88 64 78','abdoulaye@altea-ci.com', 'Medecin', 2,'COAP002','abdoul','47dfbc37d2577197c6db50e5e52693a27dee2f3725671e2bb917f9b38fd44795'),
+
+('Audrey','BOGUI','51 88 64 78','audrey@altea-ci.com', 'Caissière', 1,'COAP001','audrey','47dfbc37d2577197c6db50e5e52693a27dee2f3725671e2bb917f9b38fd44795'),
+('Yasser','Diakité','51 88 64 78','yasser@altea-ci.com', 'Secretaire', 1,'COAP001','yasser','47dfbc37d2577197c6db50e5e52693a27dee2f3725671e2bb917f9b38fd44795');
 
 -- INSERT INTO Droits(codeDroit,codeApp, labelDroit) VALUES
 -- ('CODR001','COAP001','Creation de patient'),
@@ -30,9 +35,9 @@ INSERT INTO Users(nomUser, prenomsUser,contactUser,mailUser, posteUser, profilUs
 -- ('COAP003','PUI','Pharmacie à usage interne'),
 -- ('COAP004','ADMIN','Administrateur du systeme');
 
-INSERT INTO Profils(labelProfil, auteurProfil,dateProfil, codeApp) VALUES 
+-- INSERT INTO Profils(labelProfil, auteurProfil,dateProfil, codeApp) VALUES 
 -- ('ALTEA ADMIN','koffiedy@gmail.com','23 avril 2020','COAP004');
-('ALTEA DPI','koffiedy@gmail.com','23 avril 2020','COAP002');
+-- ('ALTEA DPI','koffiedy@gmail.com','23 avril 2020','COAP002');
 
 -- INSERT INTO Droit_Profil(idProfil, codeDroit) VALUES
 -- (1,'CODR014'),

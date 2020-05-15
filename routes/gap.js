@@ -17,10 +17,12 @@ const {
     list_factures_attentes,
     list_actes,
     encaisser_facture,
-    annuler_facture
+    imprimer_facture,
+    details_sejour,
+    annuler_facture,
+    verify_facture
 } = require("../apps/gap/api/list");
 
-moment.locales('fr')
 moment.locale('fr')
 //patient
 router
@@ -55,7 +57,6 @@ router
             assure,
             assurance
         } = body
-        console.log(body)
         client.query(add_patient, [ipp,
             nom,
             prenoms,
@@ -127,13 +128,12 @@ router
             DebutHeure,
             finHeure
         } = body
-        console.log(body)
         const { params: { patient } } = req
-        client.query(add_facture, [moment().format('YYYY-DDD'),moment().format('DD-MM-YYYY'),moment().format('hh:mm:ss'),"koffi edy",specialite], (err, result) => {
+        client.query(add_facture, [moment().format('YYYY-DDD'), moment().format('DD-MM-YYYY'), moment().format('hh:mm:ss'), "koffi edy", specialite], (err, result) => {
             if (err) {
                 console.log(err)
             } else {
-                client.query(add_sejour, [debutDate, finDate, DebutHeure, finHeure, "en attente", type, patient, 1,result.rows[0].idfacture], (err, result) => {
+                client.query(add_sejour, [debutDate, finDate, DebutHeure, finHeure, "en attente", type, patient, 1, result.rows[0].idfacture], (err, result) => {
                     err && console.log(err)
                     res.header(headers);
                     res.status(status);
@@ -150,6 +150,14 @@ router
             res.header(headers);
             res.status(status);
             res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
+        });
+    })
+    .get('/details/sejour/:idsejour', (req, res) => {
+        client.query(details_sejour, [req.params.idsejour], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
         });
     })
 
@@ -171,8 +179,17 @@ router
             res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
         });
     })
+    .get('/imprimer/facture/:idpatient', (req, res) => {
+        client.query(imprimer_facture,[req.params.idpatient], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+        });
+    })
+
     .get('/encaisser/facture/:idsejour', (req, res) => {
-        client.query(encaisser_facture,[req.params.idsejour], (err, result) => {
+        client.query(encaisser_facture, [req.params.idsejour], (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);
@@ -180,14 +197,48 @@ router
         });
     })
     .get('/annuler/facture/:idsejour', (req, res) => {
-        client.query(annuler_facture,[req.params.idsejour], (err, result) => {
+        client.query(annuler_facture, [req.params.idsejour], (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);
             res.json({ message: { type: "info", label: "Facture annulée" }, ...result });
         });
     })
-   
+    .get('/verify/facture/:idfacture', (req, res) => {
+        client.query(verify_facture, [req.params.idfacture], (err, result) => {
+            err && console.log(err)
+            // res.header(headers);
+            // res.status(status);
+            const { rows } = result
+            const { numerofacture } = rows[0]
+            res.set('Content-Type', 'text/html')
+            res.send(`
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta name="theme-color" content="black">
+                <title>Verification Facture</title>
+                <style>
+                    body{
+                        padding : 1cm;
+                    }
+                    h1{
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Facture N° 2563982 DU 23 Décembre 2020</h1>
+                <h2>Status : En attente</h2>
+                <h2>Montant : 20 000 FCfa</h2>
+            </body>
+            </html>
+            `);
+        });
+    })
+
 
     //Actes
     .get('/list/actes', (req, res) => {

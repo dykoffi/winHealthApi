@@ -9,7 +9,8 @@ const {
 } = require("../apps/dpi/api/add");
 
 const {
-    list_attente_patients,
+    list_attente_soins,
+    list_attente_consultations,
     list_consultations,
     list_constantes,
     list_last_constante,
@@ -37,8 +38,16 @@ router
             res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
         });
     })
-    .get('/list/file_attente', (req, res) => {
-        client.query(list_attente_patients, (err, result) => {
+    .get('/list/soins/file_attente', (req, res) => {
+        client.query(list_attente_soins, (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
+        });
+    })
+    .get('/list/consultations/file_attente', (req, res) => {
+        client.query(list_attente_consultations, (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);

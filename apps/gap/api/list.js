@@ -40,7 +40,7 @@ exports.dossiers_patient = {
 
 exports.list_sejours = {
     name: "list_sejours",
-    text: `SELECT * FROM gap.Sejours WHERE patientSejour = $1`
+    text: `SELECT * FROM gap.Sejours WHERE patientSejour=$1 ORDER BY idSejour DESC`
 }
 
 exports.list_all_factures = {
@@ -62,6 +62,57 @@ exports.list_factures_attentes = {
         etablissementSejour=idEtablissement AND
         patientSejour=idDossier AND
         Sejours.statusSejour='en attente'`
+}
+
+exports.imprimer_facture = {
+    name: "imprimer_facture",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    general.Actes, 
+    gap.Sejours, 
+    general.Etablissement,
+    gap.DossierAdministratif
+    WHERE 
+        acteFacture=codeActe AND
+        factureSejour=idFacture AND
+        etablissementSejour=idEtablissement AND
+        patientSejour=idDossier AND
+        idDossier=$1
+    ORDER BY idFacture DESC LIMIT 1    
+    `
+}
+exports.details_sejour = {
+    name: "details_sejour",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    general.Actes, 
+    gap.Sejours, 
+    general.Etablissement,
+    gap.DossierAdministratif
+    WHERE 
+        acteFacture=codeActe AND
+        factureSejour=idFacture AND
+        etablissementSejour=idEtablissement AND
+        patientSejour=idDossier AND
+        Sejours.idSejour=$1  
+    `
+}
+
+exports.verify_facture = {
+    name: "verify_facture",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    general.Actes, 
+    gap.Sejours, 
+    general.Etablissement,
+    gap.DossierAdministratif
+    WHERE 
+        acteFacture=codeActe AND
+        factureSejour=idFacture AND
+        etablissementSejour=idEtablissement AND
+        patientSejour=idDossier AND
+        idFacture=$1  
+    `
 }
 
 exports.list_actes = {
