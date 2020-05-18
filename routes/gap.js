@@ -29,10 +29,9 @@ router
     .post('/add/patient', function (req, res) {
         const body = JSON.parse(Object.keys(req.body)[0])
         const {
-            ipp,
             nom,
             prenoms,
-            nomjeune,
+            civilite,
             sexe,
             datenaissance,
             lieunaissance,
@@ -54,15 +53,16 @@ router
             nompersonnesure,
             prenomspersonnesure,
             contactpersonnesure,
+            qualitepersonnesure,
             assure,
             assurance
         } = body
-        client.query(add_patient, [ipp,
+        client.query(add_patient, [
             nom,
             prenoms,
-            nomjeune,
+            civilite,
             sexe,
-            datenaissance,
+            moment(datenaissance).format("DD-MM-YYYY"),
             lieunaissance,
             nationalite,
             profession,
@@ -82,6 +82,7 @@ router
             nompersonnesure,
             prenomspersonnesure,
             contactpersonnesure,
+            qualitepersonnesure,
             assure,
             assurance], (err, result) => {
                 err && console.log(err)
@@ -180,7 +181,7 @@ router
         });
     })
     .get('/imprimer/facture/:idpatient', (req, res) => {
-        client.query(imprimer_facture,[req.params.idpatient], (err, result) => {
+        client.query(imprimer_facture, [req.params.idpatient], (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);
@@ -225,14 +226,31 @@ router
                         padding : 1cm;
                     }
                     h1{
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                        margin-top:1cm;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, antarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                    }
+                    .valid{
+                        font-size:50px;
+                        text-align : 'center';
+                        color:'green'
                     }
                 </style>
             </head>
             <body>
-                <h1>Facture N° 2563982 DU 23 Décembre 2020</h1>
+                    <h1 class='valid'>VALID</h1>
+                <h1>Facture N° 2563982 DU ${rows[0].datefacture}</h1>
                 <h2>Status : En attente</h2>
-                <h2>Montant : 20 000 FCfa</h2>
+                <h2>Montant : ${rows[0].prixacte} FCfa</h2>
+                <h2>Auteur : ${rows[0].auteurfacture}</h2>
+                <h1>Patient</h1>
+                <h2>Nom et prenoms :${rows[0].nompatient} ${rows[0].prenomspatient}</h2>
+                <h2>Naissance : ${moment(rows[0].datenaissancepatient).format("DD MMM YYYY")} à ${rows[0].lieunaissancepatient}</h2>
+                <h2>Domicile : ${rows[0].habitationpatient}</h2>
+                <h2>Contact : ${rows[0].contactpatient}</h2>
+                <h1>Sejour du ${moment(rows[0].datedebutsejour).format("DD MMM YYYY")}</h1>
+                <h2>Entré(e) : ${moment(rows[0].datedebutsejour).format("DD MMM YYYY")} ${rows[0].heuredebutsejour}</h2>
+                <h2>Sorti(e) : ${moment(rows[0].datefinsejour).format("DD MMM YYYY")} ${rows[0].heuredebutsejour}</h2>
+                <h2>Motif : ${rows[0].typesejour}</h2>
             </body>
             </html>
             `);

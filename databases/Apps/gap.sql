@@ -5,13 +5,11 @@ CREATE SCHEMA gap;
 CREATE TABLE gap.DossierAdministratif (
     -- dossier
     idDossier SERIAL PRIMARY KEY,
-    codeDossier VARCHAR(20) UNIQUE,
-    -- etablissement
     -- patient
-    ippPatient VARCHAR(200) UNIQUE,
+    ippPatient VARCHAR(200) UNIQUE DEFAULT get_ipp(),
     nomPatient VARCHAR(100),
     prenomsPatient VARCHAR(200),
-    nomJeuneFille VARCHAR(200),
+    civilitePatient VARCHAR(200),
     sexePatient VARCHAR(15),
     dateNaissancePatient VARCHAR(100),
     lieuNaissancePatient VARCHAR(100),
@@ -37,6 +35,7 @@ CREATE TABLE gap.DossierAdministratif (
     nomPersonnesurePatient VARCHAR(100),
     prenomsPersonnesurePatient VARCHAR(100),
     contactPersonnesurePatient VARCHAR(100),
+    qualitePersonnesurePatient VARCHAR(100),
     -- assurance
     assure VARCHAR(10),
     assurance VARCHAR(50)
