@@ -51,38 +51,40 @@ CREATE TABLE gap.DossierParamedical (
     codeDossier VARCHAR(20) UNIQUE
 );
 
--- CREATE TABLE gap.DossierPatient (
---     idDossier SERIAL PRIMARY KEY,
---     codeDossier VARCHAR(20),
---     DossierAdministratif VARCHAR(20) REFERENCES gap.DossierAdministratif (codeDossier),
---     DossierMedical VARCHAR(20) REFERENCES gap.DossierMedical (codeDossier),
---     DossierParamedical VARCHAR(20) REFERENCES gap.DossierParamedical (codeDossier),
---     UNIQUE (
---         DossierAdministratif,
---         DossierMedical,
---         DossierParamedical
---     )
--- );
-
-CREATE TABLE gap.Factures (
-    idFacture SERIAL PRIMARY KEY,
-    numeroFacture VARCHAR(100),
-    dateFacture VARCHAR(20),
-    heureFacture VARCHAR(10),
-    auteurFacture VARCHAR(100),
-    acteFacture VARCHAR(20) REFERENCES general.Actes (codeActe)
-);
-
-
 CREATE TABLE gap.Sejours (
     idSejour SERIAL PRIMARY KEY,
+    numeroSejour VARCHAR(30) UNIQUE DEFAULT get_numeroSejour(),
     dateDebutSejour VARCHAR(50),
     dateFinSejour  VARCHAR(50),
     heureDebutSejour VARCHAR(50),
     heureFinSejour  VARCHAR(50),
     typeSejour VARCHAR(50), -- consultation, Hospitalisation ou soins
-    statusSejour VARCHAR(20), -- en cours, termine ou annule
+    statusSejour VARCHAR(20), -- en cours, termine ou annule ou les differentes attentes
     patientSejour INTEGER REFERENCES gap.DossierAdministratif (idDossier),
-    etablissementSejour INTEGER REFERENCES general.Etablissement (idEtablissement),
-    factureSejour INTEGER REFERENCES gap.Factures (idFacture)
+    etablissementSejour INTEGER REFERENCES general.Etablissement (idEtablissement)
 );
+
+CREATE TABLE gap.Sejour_Acte (
+    idSejourActe SERIAL PRIMARY KEY,
+    numeroSejour VARCHAR(20) REFERENCES gap.Sejours (numeroSejour),
+    codeActe VARCHAR(20) REFERENCES general.Actes (codeActe)
+);
+
+CREATE TABLE gap.Factures (
+    idFacture SERIAL PRIMARY KEY,
+    numeroFacture VARCHAR(100) UNIQUE DEFAULT get_numeroFacture(),
+    dateFacture VARCHAR(20),
+    heureFacture VARCHAR(10),
+    auteurFacture VARCHAR(100),
+    montantTotalFacture INT,
+    resteFacture INT,
+    sejourFacture VARCHAR(30) REFERENCES gap.Sejours (numeroSejour)
+);
+
+CREATE TABLE gap.Paiements (
+    idPaiement SERIAL PRIMARY KEY,
+    modePaiement VARCHAR(100),
+    montantPaiement VARCHAR(50),
+    facturePaiement VARCHAR(30) REFERENCES gap.Factures (numeroFacture)
+);
+

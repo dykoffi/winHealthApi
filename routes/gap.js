@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const client = require("../constants/connection");
 const moment = require('moment')
-const crypto = require('crypto')
 const { headers, status } = require('../constants/query')
 const {
     add_patient,
     add_sejour,
-    add_facture
+    add_facture,
+    add_sejour_acte
 } = require("../apps/gap/api/add");
 const {
     list_patient,
@@ -20,7 +20,8 @@ const {
     imprimer_facture,
     details_sejour,
     annuler_facture,
-    verify_facture
+    verify_facture,
+    search_facture
 } = require("../apps/gap/api/list");
 
 moment.locale('fr')
@@ -120,30 +121,49 @@ router
 router
     .post('/add/sejour/:patient', (req, res) => {
         const body = JSON.parse(Object.keys(req.body)[0])
+        console.log(body)
         const {
             type,
-            specialite,
-            medecin,
+            actes,
+            nomuser,
+            prenomsuser,
             finDate,
             debutDate,
             DebutHeure,
             finHeure
         } = body
         const { params: { patient } } = req
-        client.query(add_facture, [moment().format('YYYY-DDD'), moment().format('DD-MM-YYYY'), moment().format('hh:mm:ss'), "koffi edy", specialite], (err, result) => {
-            if (err) {
-                console.log(err)
-            } else {
-                client.query(add_sejour, [debutDate, finDate, DebutHeure, finHeure, "en attente", type, patient, 1, result.rows[0].idfacture], (err, result) => {
-                    err && console.log(err)
-                    res.header(headers);
-                    res.status(status);
+        client.query(add_sejour, [
+            moment(debutDate).format("DD-MM-YYYY"),
+            moment(finDate).format("DD-MM-YYYY"),
+            moment(DebutHeure).format("hh:mm"),
+            moment(finHeure).format("hh:mm"),
+            "en attente",
+            type,
+            patient,
+            1], (err, result) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    const sejour = result.rows[0].numerosejour
+                    actes.forEach(acte => {
+                        client.query(add_sejour_acte, [sejour, acte], (err, result) => { })
+                    });
 
-                    res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
-                });
-            }
-        })
-
+                    client.query(add_facture, [
+                        moment().format('DD-MM-YYYY'),
+                        moment().format('hh:mm'),
+                        nomuser + " " + prenomsuser,
+                        sejour
+                    ], (err, result) => {
+                        if (err) { console.log(err) } else {
+                            res.header(headers);
+                            res.status(status);
+                            res.json({message:{type: "info",label: "Liste des sejours actualisée"},...result});
+                        }
+                    })
+                }
+            });
     })
     .get('/list/sejours/:patient', (req, res) => {
         client.query(list_sejours, [req.params.patient], (err, result) => {
@@ -172,6 +192,14 @@ router
             res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
         });
     })
+    .get('/search/facture/:numeroFacture', (req, res) => {
+        client.query(search_facture, [req.params.idFactue], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+        });
+    })
     .get('/list/factures_attentes', (req, res) => {
         client.query(list_factures_attentes, (err, result) => {
             err && console.log(err)
@@ -188,7 +216,6 @@ router
             res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
         });
     })
-
     .get('/encaisser/facture/:idsejour', (req, res) => {
         client.query(encaisser_facture, [req.params.idsejour], (err, result) => {
             err && console.log(err)

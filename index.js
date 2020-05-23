@@ -3,7 +3,12 @@ const debug = require('debug')('api:server');
 const http = require('http');
 
 /**
+ const fs = require('fs');
  * Get port from environment and store in Express.
+ const options = {
+   key: fs.readFileSync('key.pem'),
+   cert: fs.readFileSync('cert.pem')
+ };
  */
 
 const port = normalizePort(process.env.PORT || '8000');

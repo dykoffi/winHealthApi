@@ -6,26 +6,33 @@ exports.add_patient = {
 exports.add_sejour = {
     name: "add_sejour",
     text: `INSERT INTO gap.Sejours (
-                dateDebutSejour ,
-                dateFinSejour  ,
-                heureDebutSejour ,
-                heureFinSejour  ,
-                statusSejour , 
-                typeSejour, 
-                patientSejour,
-                etablissementSejour,
-                factureSejour
-                ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`
+        dateDebutSejour,
+        dateFinSejour,
+        heureDebutSejour,
+        heureFinSejour,
+        statusSejour,
+        typeSejour,
+        patientSejour,
+        etablissementSejour
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING numeroSejour`
 }
 
 exports.add_facture = {
     name: "add_facture",
     text: `INSERT INTO gap.Factures (
-                numeroFacture,
-                dateFacture,
-                heureFacture,
-                auteurFacture,
-                acteFacture
-                ) VALUES ($1,$2,$3,$4,$5)
-                RETURNING idFacture`
-} 
+        dateFacture,
+        heureFacture,
+        auteurFacture,
+        montantTotalFacture,
+        resteFacture,
+        sejourFacture
+        ) VALUES ($1,$2,$3,get_total_facture($4),get_total_facture($4),$4)`
+}
+
+exports.add_sejour_acte = {
+    name:`add_sejour_acte`,
+    text:`INSERT INTO gap.Sejour_Acte (
+        numeroSejour,
+        codeActe
+    ) VALUES ($1,$2)`
+}

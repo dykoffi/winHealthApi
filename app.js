@@ -2,6 +2,7 @@ const createError = require('http-errors');
 const express = require('express');
 const logger = require('morgan');
 const cookieparser = require('cookie-parser')
+const path = require('path')
 
 //definition des routes des applications
 const connexion_router = require('./routes/connexion')
@@ -14,6 +15,7 @@ const app = express();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname,'public')))
 app.use(cookieparser())
 
 //utilisation des routes des applications

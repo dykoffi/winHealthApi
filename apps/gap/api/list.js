@@ -7,14 +7,14 @@ exports.search_patient = {
     name: "search_patient",
     text: `SELECT 
     idDossier,
-    ippPatient, 
+    ippPatient,
     nomPatient, 
-    prenomsPatient, 
-    sexePatient, 
-    dateNaissancePatient, 
+    prenomsPatient,
+    sexePatient,
+    dateNaissancePatient,
     lieuNaissancePatient, 
     nationalitePatient,
-    habitationPatient, 
+    habitationPatient,
     contactPatient  
     FROM gap.DossierAdministratif WHERE 
     nomPatient||' '||prenomsPatient ~* $1 OR 
@@ -26,7 +26,6 @@ exports.search_patient = {
     dateNaissancePatient ~* $1
     ORDER BY idDossier DESC`
 }
-
 
 exports.details_patient = {
     name: "details_patient",
@@ -43,6 +42,33 @@ exports.list_sejours = {
     text: `SELECT * FROM gap.Sejours WHERE patientSejour=$1 ORDER BY idSejour DESC`
 }
 
+exports.details_sejour = {
+    name: "details_sejour",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    general.Actes, 
+    gap.Sejours, 
+    general.Etablissement,
+    gap.DossierAdministratif
+    WHERE 
+        sejourFacture=numeroSejour AND
+        etablissementSejour=idEtablissement AND
+        patientSejour=idDossier AND
+        Sejours.idSejour=$1  
+    `
+}
+
+exports.list_actes = {
+    name: "list_actes",
+    text: "SELECT * FROM general.Actes"
+}
+
+//factures
+exports.search_facture = {
+    name: "research_facture",
+    text: `SELECT * FROM gap.Factures WHERE numeroFacture  ~* $1`
+}
+
 exports.list_all_factures = {
     name: "list_all_factures",
     text: `SELECT * FROM gap.Factures`
@@ -57,7 +83,6 @@ exports.list_factures_attentes = {
     general.Etablissement,
     gap.DossierAdministratif
     WHERE 
-        acteFacture=codeActe AND
         factureSejour=idFacture AND
         etablissementSejour=idEtablissement AND
         patientSejour=idDossier AND
@@ -69,33 +94,26 @@ exports.imprimer_facture = {
     text: `SELECT * FROM 
     gap.Factures, 
     general.Actes, 
-    gap.Sejours, 
+    gap.Sejours,
     general.Etablissement,
     gap.DossierAdministratif
     WHERE 
-        acteFacture=codeActe AND
-        factureSejour=idFacture AND
+        sejourFacture=numeroSejour AND
         etablissementSejour=idEtablissement AND
         patientSejour=idDossier AND
         idDossier=$1
     ORDER BY idFacture DESC LIMIT 1    
     `
 }
-exports.details_sejour = {
-    name: "details_sejour",
-    text: `SELECT * FROM 
-    gap.Factures, 
-    general.Actes, 
-    gap.Sejours, 
-    general.Etablissement,
-    gap.DossierAdministratif
-    WHERE 
-        acteFacture=codeActe AND
-        factureSejour=idFacture AND
-        etablissementSejour=idEtablissement AND
-        patientSejour=idDossier AND
-        Sejours.idSejour=$1  
-    `
+
+exports.encaisser_facture = {
+    name: "encaisser_facture",
+    text: `UPDATE gap.Sejours SET  statusSejour='validé' WHERE idSejour=$1`
+}
+
+exports.annuler_facture = {
+    name: "annuler_facture",
+    text: `UPDATE gap.Sejours SET  statusSejour='annulé' WHERE idSejour=$1`
 }
 
 exports.verify_facture = {
@@ -113,19 +131,4 @@ exports.verify_facture = {
         patientSejour=idDossier AND
         idFacture=$1  
     `
-}
-
-exports.list_actes = {
-    name : "list_actes",
-    text : "SELECT * FROM general.Actes"
-}
-
-exports.encaisser_facture = {
-    name : "encaisser_facture",
-    text : `UPDATE gap.Sejours SET  statusSejour='validé' WHERE idSejour=$1`
-}
-
-exports.annuler_facture = {
-    name : "annuler_facture",
-    text : `UPDATE gap.Sejours SET  statusSejour='annulé' WHERE idSejour=$1`
 }
