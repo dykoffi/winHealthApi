@@ -88,3 +88,32 @@ CREATE TABLE gap.Paiements (
     facturePaiement VARCHAR(30) REFERENCES gap.Factures (numeroFacture)
 );
 
+CREATE TABLE gap.Comptes (
+    idCompte SERIAL PRIMARY KEY,
+    numeroCompte  VARCHAR(20) UNIQUE DEFAULT get_numeroCompte(),
+    montantCompte INT DEFAULT 0,
+    dateCompte VARCHAR(20),
+    heureCompte VARCHAR(10),
+    patientCompte VARCHAR(20) REFERENCES gap.DossierAdministratif (ippPatient)
+);
+
+CREATE TABLE gap.Transactions (
+    idTransaction  SERIAL PRIMARY KEY,
+    dateTransaction VARCHAR(20),
+    heureTransaction VARCHAR(10),
+    montantTransaction INT,
+    modeTransaction VARCHAR(20),
+    typeTransaction VARCHAR(20),
+    compteTransaction VARCHAR(20) REFERENCES gap.Comptes (numeroCompte)
+);
+
+CREATE TABLE gap.Controles (
+    idControle SERIAL PRIMARY KEY,
+    dateDebutControle VARCHAR(30),
+    heureDebutControle VARCHAR(20),
+    dateFinControle VARCHAR(30),
+    heureFinControle VARCHAR(20),
+    typeControle VARCHAR(30)  DEFAULT 'Controle',   
+    statutControle VARCHAR(30) DEFAULT 'attente(infirmier)',
+    sejourControle VARCHAR(20) REFERENCES gap.Sejours (numeroSejour)
+);

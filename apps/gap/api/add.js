@@ -30,9 +30,57 @@ exports.add_facture = {
 }
 
 exports.add_sejour_acte = {
-    name:`add_sejour_acte`,
-    text:`INSERT INTO gap.Sejour_Acte (
+    name: `add_sejour_acte`,
+    text: `INSERT INTO gap.Sejour_Acte (
         numeroSejour,
         codeActe
     ) VALUES ($1,$2)`
+}
+
+exports.encaisser_facture = {
+    name: "encaisser_facture",
+    text: `INSERT INTO gap.Paiements (modePaiement,montantPaiement,facturePaiement) VALUES($1,$2,$3)`
+}
+
+exports.update_facture = {
+    name: "update_facture",
+    text: `UPDATE gap.Factures SET resteFacture=get_reste_facture((SELECT sejourFacture FROM gap.Factures WHERE numeroFacture=$1),$1) WHERE numeroFacture=$1`
+}
+
+exports.add_controle = {
+    name: "add_controle",
+    text: `INSERT INTO gap.Controles(
+        dateDebutControle,
+        heureDebutControle,
+        dateFinControle,
+        heureFinControle,
+        sejourControle
+    ) VALUES ($1,$2,$3,$4,$5)`
+}
+
+exports.add_compte = {
+    name: "add_compte",
+    text: `INSERT INTO gap.Comptes(
+        montantcompte,
+        dateCompte,
+        heureCompte,
+        patientCompte
+    ) VALUES ($1,$2,$3,$4)`
+}
+
+exports.add_transaction = {
+    name: "add_transaction",
+    text: `INSERT INTO gap.Transactions(
+        datetransaction,
+        heuretransaction,
+        montantTransaction,
+        modeTransaction,
+        typeTransaction,
+        compteTransaction
+    ) VALUES ($1,$2,$3,$4,$5,$6)`
+}
+
+exports.update_compte = {
+    name:'update_compte',
+    text:`UPDATE gap.Comptes SET montantCompte=get_montant_compte($1) WHERE numeroCompte=$1`
 }

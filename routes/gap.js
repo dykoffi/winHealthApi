@@ -6,25 +6,34 @@ const {
     add_patient,
     add_sejour,
     add_facture,
-    add_sejour_acte
+    encaisser_facture,
+    update_facture,
+    add_sejour_acte,
+    add_controle,
+    add_compte,
+    update_compte,
+    add_transaction
 } = require("../apps/gap/api/add");
 const {
+    list_comptes,
     list_patient,
     search_patient,
     details_patient,
     list_sejours,
+    list_actes,
+    details_sejour,
     list_all_factures,
     list_factures_attentes,
-    list_actes,
-    encaisser_facture,
     imprimer_facture,
-    details_sejour,
     annuler_facture,
     verify_facture,
-    search_facture
+    search_facture,
+    details_facture,
+    details_compte
 } = require("../apps/gap/api/list");
 
 moment.locale('fr')
+
 //patient
 router
     .post('/add/patient', function (req, res) {
@@ -159,7 +168,7 @@ router
                         if (err) { console.log(err) } else {
                             res.header(headers);
                             res.status(status);
-                            res.json({message:{type: "info",label: "Liste des sejours actualisée"},...result});
+                            res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
                         }
                     })
                 }
@@ -173,14 +182,92 @@ router
             res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
         });
     })
-    .get('/details/sejour/:idsejour', (req, res) => {
-        client.query(details_sejour, [req.params.idsejour], (err, result) => {
+    .get('/details/sejour/:idsejour/:numerosejour', (req, res) => {
+        client.query(details_sejour, [req.params.idsejour, req.params.numerosejour], (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);
             res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
         });
     })
+
+
+//controles 
+router
+    .post("/add/controle/:sejour", (req, res) => {
+        const body = JSON.parse(Object.keys(req.body)[0])
+        console.log(body)
+        const {
+            datedebut,
+            heureDebut,
+            dateFin,
+            heureFin,
+        } = body
+        client.query(add_controle, [datedebut, heureDebut, dateFin, heureFin, req.params.numerosejour], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+        });
+    })
+
+//Comptes
+router
+    .get("/list/comptes", (req, res) => {
+        client.query(list_comptes, (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des comptes actualisée" }, ...result });
+        });
+    })
+    .get("/details/compte/:numeroCompte", (req, res) => {
+        client.query(details_compte, [req.params.numeroCompte], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des comptes actualisée" }, ...result });
+        });
+    })
+    .post("/add/compte", (req, res) => {
+        const body = JSON.parse(Object.keys(req.body)[0])
+        console.log(body)
+        const {
+            ipp
+        } = body
+        client.query(add_compte, [0, moment().format('DD-MM-YYYY'), moment().format('hh:ss'), ipp], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+        });
+    })
+
+//TRANSACTION
+router
+    .post("/add/transaction", (req, res) => {
+        const body = JSON.parse(Object.keys(req.body)[0])
+        console.log(body)
+        const {
+            montant,
+            type,
+            mode,
+            compte
+        } = body
+        client.query(add_transaction, [moment().format('DD-MM-YYYY'), moment().format('hh:ss'), montant, type, mode, compte], (err, result) => {
+            if (err) {
+                console.log(err)
+            } else {
+                client.query(update_compte, [compte], (err, result) => {
+                    err && console.log(err)
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+                });
+            }
+        });
+    })
+
 
 //factures
 router
@@ -193,7 +280,7 @@ router
         });
     })
     .get('/search/facture/:numeroFacture', (req, res) => {
-        client.query(search_facture, [req.params.idFactue], (err, result) => {
+        client.query(search_facture, [req.params.numeroFacture], (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);
@@ -208,6 +295,14 @@ router
             res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
         });
     })
+    .get('/details/facture/:numeroFacture', (req, res) => {
+        client.query(details_facture, [req.params.numeroFacture], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+        });
+    })
     .get('/imprimer/facture/:idpatient', (req, res) => {
         client.query(imprimer_facture, [req.params.idpatient], (err, result) => {
             err && console.log(err)
@@ -216,12 +311,21 @@ router
             res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
         });
     })
-    .get('/encaisser/facture/:idsejour', (req, res) => {
-        client.query(encaisser_facture, [req.params.idsejour], (err, result) => {
-            err && console.log(err)
-            res.header(headers);
-            res.status(status);
-            res.json({ message: { type: "info", label: "Facture encaissée" }, ...result });
+    .post('/encaisser/facture/:numeroFacture', (req, res) => {
+        const body = JSON.parse(Object.keys(req.body)[0])
+        const { modepaiement, montantrecu } = body
+        client.query(encaisser_facture, [modepaiement, montantrecu, req.params.numeroFacture], (err, result) => {
+            if (err) console.log(err)
+            else {
+                client.query(update_facture, [req.params.numeroFacture], (err, result) => {
+                    if (err) console.log(err)
+                    else {
+                        res.header(headers);
+                        res.status(status);
+                        res.json({ message: { type: "info", label: "Facture encaissée" }, ...result });
+                    }
+                })
+            }
         });
     })
     .get('/annuler/facture/:idsejour', (req, res) => {
@@ -284,8 +388,8 @@ router
         });
     })
 
-
-    //Actes
+//Actes
+router
     .get('/list/actes', (req, res) => {
         client.query(list_actes, (err, result) => {
             err && console.log(err)
@@ -294,7 +398,6 @@ router
             res.json({ message: { type: "info", label: "" }, ...result });
         });
     })
-
 
 
 module.exports = router
