@@ -117,3 +117,13 @@ CREATE TABLE gap.Controles (
     statutControle VARCHAR(30) DEFAULT 'attente(infirmier)',
     sejourControle VARCHAR(20) REFERENCES gap.Sejours (numeroSejour)
 );
+
+CREATE TABLE gap.Assurances (
+    idAssurance SERIAL PRIMARY KEY,
+    nomAssurance VARCHAR(50),
+    codeAssurance VARCHAR(20),
+    faxAssurance VARCHAR(30),
+    contactAsssurance VARCHAR(50),
+    mailAssurance VARCHAR(30),
+    localAssurance VARCHAR(100)
+);

@@ -1,8 +1,10 @@
+//TODO  : PATIENTS
 exports.add_patient = {
     name: "add_patient",
     text: "INSERT INTO gap.DossierAdministratif (nomPatient,prenomsPatient,civilitePatient,sexePatient,dateNaissancePatient,lieuNaissancePatient,nationalitePatient,professionPatient,situationMatrimonialePatient,religionPatient,habitationPatient,contactPatient, nomPerePatient,prenomsPerePatient,contactPerePatient,nomMerePatient,prenomsMerePatient,contactMerePatient,nomTuteurPatient,prenomsTuteurPatient,contactTuteurPatient,nomPersonnesurePatient,prenomsPersonnesurePatient,contactPersonnesurePatient,qualitePersonnesurePatient,assure,assurance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27) RETURNING idDossier"
 }
 
+//TODO  : SEJOURS
 exports.add_sejour = {
     name: "add_sejour",
     text: `INSERT INTO gap.Sejours (
@@ -17,6 +19,7 @@ exports.add_sejour = {
         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING numeroSejour`
 }
 
+//TODO  : FACTURES
 exports.add_facture = {
     name: "add_facture",
     text: `INSERT INTO gap.Factures (
@@ -42,11 +45,7 @@ exports.encaisser_facture = {
     text: `INSERT INTO gap.Paiements (modePaiement,montantPaiement,facturePaiement) VALUES($1,$2,$3)`
 }
 
-exports.update_facture = {
-    name: "update_facture",
-    text: `UPDATE gap.Factures SET resteFacture=get_reste_facture((SELECT sejourFacture FROM gap.Factures WHERE numeroFacture=$1),$1) WHERE numeroFacture=$1`
-}
-
+//TODO  : CONTROLES
 exports.add_controle = {
     name: "add_controle",
     text: `INSERT INTO gap.Controles(
@@ -58,6 +57,7 @@ exports.add_controle = {
     ) VALUES ($1,$2,$3,$4,$5)`
 }
 
+//TODO  : COMPTES
 exports.add_compte = {
     name: "add_compte",
     text: `INSERT INTO gap.Comptes(
@@ -80,7 +80,15 @@ exports.add_transaction = {
     ) VALUES ($1,$2,$3,$4,$5,$6)`
 }
 
-exports.update_compte = {
-    name:'update_compte',
-    text:`UPDATE gap.Comptes SET montantCompte=get_montant_compte($1) WHERE numeroCompte=$1`
+//TODO  : ASSURANCES
+exports.add_assurance = {
+    name: "add_assurance",
+    text: `INSERT INTO gap.Assurances (
+        nomAssurance,
+        codeAssurance,
+        faxAssurance,
+        contactAsssurance,
+        mailAssurance,
+        localAssurance
+    ) VALUES ($1,$2,$3,$4,$5,$6)`
 }
