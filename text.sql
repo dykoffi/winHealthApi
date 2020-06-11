@@ -31,3 +31,31 @@ SELECT
     )
 FROM
     generate_series(1, 10) as generator
+
+
+
+
+CREATE ROLE winhealth WITH
+    LOGIN
+    SUPERUSER
+    INHERIT
+    CREATEDB
+    CREATEROLE
+    REPLICATION
+    ENCRYPTED PASSWORD 'md57efff143e418ee16274f35ad7df30354'
+    VALID UNTIL 'infinity'
+
+    CREATE DATABASE mytest WITH
+        OWNER = winhealth
+        ENCODING = 'UTF-8'
+        LC_LOCATE = 'fr_FR.UTF-8'
+        LC_CTYPE = 'fr_FR.UTF-8'
+        TABLESPACE = pg_default
+        CONNECTION LIMIT = -1
+
+        su postgres
+           psql
+             CREATE ROLE u_ecliss WITH LOGIN ENCRYPTED PASSWORD 'p_ecliss' SUPERUSER;
+             CREATE DATABASE db_ecliss OWNER u_ecliss;
+             \q
+           exit

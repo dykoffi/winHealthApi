@@ -1,7 +1,9 @@
 const router = require("express").Router();
+const format = require('pg-format')
 const client = require("../constants/connection");
 const moment = require('moment')
 const { headers, status } = require('../constants/query')
+const { test1, test2 } = require('../apps/gap/api/test')
 const {
     //ajouter
     add_patient,
@@ -13,7 +15,8 @@ const {
     add_transaction,
     add_assurance,
     //autres
-    encaisser_facture,
+    encaisser_patient_facture,
+    encaisser_assurance_facture
 } = require("../apps/gap/api/add");
 const {
     //listes
@@ -21,9 +24,12 @@ const {
     list_patient,
     list_sejours,
     list_actes,
+    list_actesSejour,
     list_all_factures,
     list_factures_attentes,
     list_patient_no_compte,
+    list_assurances,
+    list_controles,
     //details
     details_patient,
     details_sejour,
@@ -44,10 +50,18 @@ const {
 const {
     update_patient,
     update_sejour,
-    update_facture,
+    update_patient_facture,
+    update_assurance_facture,
     update_compte,
     update_assurance
 } = require("../apps/gap/api/update")
+const {
+    delete_patient,
+    delete_sejour,
+    delete_facture,
+    delete_compte,
+    delete_assurance
+} = require("../apps/gap/api/delete")
 
 moment.locale('fr')
 
@@ -81,8 +95,7 @@ router
             prenomspersonnesure,
             contactpersonnesure,
             qualitepersonnesure,
-            assure,
-            assurance
+
         } = body
         client.query(add_patient, [
             nom,
@@ -110,13 +123,12 @@ router
             prenomspersonnesure,
             contactpersonnesure,
             qualitepersonnesure,
-            assure,
-            assurance], (err, result) => {
-                err && console.log(err)
-                res.header(headers);
-                res.status(status);
-                res.json({ message: { type: "success", label: "nouveau patient enregistré" }, ...result });
-            });
+        ], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "success", label: "nouveau patient enregistré" }, ...result });
+        });
     })
     .get('/list/patients', (req, res) => {
         client.query(list_patient, (err, result) => {
@@ -155,7 +167,14 @@ router
             finDate,
             debutDate,
             DebutHeure,
-            finHeure
+            finHeure,
+            gestionnaire,
+            organisme,
+            beneficiaire,
+            assurePrinc,
+            matriculeAssure,
+            numeroPEC,
+            taux
         } = body
         const { params: { patient } } = req
         client.query(add_sejour, [
@@ -166,6 +185,13 @@ router
             "en attente",
             type,
             patient,
+            gestionnaire,
+            organisme,
+            beneficiaire,
+            assurePrinc,
+            matriculeAssure,
+            numeroPEC,
+            taux,
             1], (err, result) => {
                 if (err) {
                     console.log(err)
@@ -203,7 +229,7 @@ router
             err && console.log(err)
             res.header(headers);
             res.status(status);
-            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+            res.json({ message: { type: "info", label: "" }, ...result });
         });
     })
 
@@ -222,7 +248,7 @@ router
             err && console.log(err)
             res.header(headers);
             res.status(status);
-            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+            res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
 
@@ -261,7 +287,7 @@ router
             err && console.log(err)
             res.header(headers);
             res.status(status);
-            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+            res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
 
@@ -283,7 +309,7 @@ router
                     err && console.log(err)
                     res.header(headers);
                     res.status(status);
-                    res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+                    res.json({ message: { type: "info", label: " " }, ...result });
                 });
             }
         });
@@ -297,7 +323,7 @@ router
             err && console.log(err)
             res.header(headers);
             res.status(status);
-            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+            res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
     .get('/search/facture/:numeroFacture', (req, res) => {
@@ -305,7 +331,7 @@ router
             err && console.log(err)
             res.header(headers);
             res.status(status);
-            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+            res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
     .get('/list/factures_attentes', (req, res) => {
@@ -313,7 +339,7 @@ router
             err && console.log(err)
             res.header(headers);
             res.status(status);
-            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+            res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
     .get('/details/facture/:numeroFacture', (req, res) => {
@@ -321,7 +347,7 @@ router
             err && console.log(err)
             res.header(headers);
             res.status(status);
-            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+            res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
     .get('/imprimer/facture/:idpatient', (req, res) => {
@@ -329,16 +355,16 @@ router
             err && console.log(err)
             res.header(headers);
             res.status(status);
-            res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+            res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
-    .post('/encaisser/facture/:numeroFacture', (req, res) => {
+    .post('/encaisser_patient/facture/:numeroFacture', (req, res) => {
         const body = JSON.parse(Object.keys(req.body)[0])
         const { modepaiement, montantrecu, compte } = body
-        client.query(encaisser_facture, [modepaiement, montantrecu, req.params.numeroFacture], (err, result) => {
+        client.query(encaisser_patient_facture, [modepaiement, montantrecu, req.params.numeroFacture], (err, result) => {
             if (err) console.log(err)
             else {
-                client.query(update_facture, [req.params.numeroFacture], (err, result) => {
+                client.query(update_patient_facture, [req.params.numeroFacture], (err, result) => {
                     if (err) console.log(err)
                     else {
                         if (modepaiement === "Compte") {
@@ -351,7 +377,40 @@ router
                                         err && console.log(err)
                                         res.header(headers);
                                         res.status(status);
-                                        res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+                                        res.json({ message: { type: "info", label: " " }, ...result });
+                                    });
+                                }
+                            });
+                        } else {
+                            res.header(headers);
+                            res.status(status);
+                            res.json({ message: { type: "info", label: "Facture encaissée" }, ...result });
+                        }
+                    }
+                })
+            }
+        });
+    })
+    .post('/encaisser_assurance/facture/:numeroFacture', (req, res) => {
+        const body = JSON.parse(Object.keys(req.body)[0])
+        const { modepaiement, montantrecu, compte } = body
+        client.query(encaisser_assurance_facture, [modepaiement, montantrecu, req.params.numeroFacture], (err, result) => {
+            if (err) console.log(err)
+            else {
+                client.query(update_assurance_facture, [req.params.numeroFacture], (err, result) => {
+                    if (err) console.log(err)
+                    else {
+                        if (modepaiement === "Compte") {
+                            console.log('paiement par compte')
+                            client.query(add_transaction, [moment().format('DD-MM-YYYY'), moment().format('hh:ss'), '-' + montantrecu, 'Retrait', 'Paiement facture', compte], (err, result) => {
+                                if (err) {
+                                    console.log(err)
+                                } else {
+                                    client.query(update_compte, [compte], (err, result) => {
+                                        err && console.log(err)
+                                        res.header(headers);
+                                        res.status(status);
+                                        res.json({ message: { type: "info", label: " " }, ...result });
                                     });
                                 }
                             });
@@ -431,19 +490,24 @@ router
         const body = JSON.parse(Object.keys(req.body)[0])
         console.log(body)
         const {
-            nomAssurance,
-            codeAssurance,
-            faxAssurance,
-            contactAsssurance,
-            mailAssurance,
-            localAssurance
+            nom,
+            code,
+            type,
+            fax,
+            telephone,
+            mail,
+            adresse,
+            site_web
         } = body
-        client.query(add_assurance, [nomAssurance,
-            codeAssurance,
-            faxAssurance,
-            contactAsssurance,
-            mailAssurance,
-            localAssurance], (err, result) => {
+        client.query(add_assurance, [
+            nom,
+            code,
+            type,
+            fax,
+            telephone,
+            mail,
+            adresse,
+            site_web], (err, result) => {
                 if (err) console.log(err)
                 else {
                     res.header(headers);
@@ -483,17 +547,18 @@ router
             else {
                 res.header(headers);
                 res.status(status);
-                res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+                res.json({ message: { type: "info", label: " " }, ...result });
             }
         });
     })
     .get('/list/assurances', (req, res) => {
         client.query(list_assurances, (err, result) => {
+            console.log("list des assurances")
             if (err) console.log(err)
             else {
                 res.header(headers);
                 res.status(status);
-                res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+                res.json({ message: { type: "info", label: "" }, ...result });
             }
         });
     })
@@ -503,7 +568,7 @@ router
             else {
                 res.header(headers);
                 res.status(status);
-                res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+                res.json({ message: { type: "info", label: "" }, ...result });
             }
         });
     })
@@ -513,10 +578,16 @@ router
             else {
                 res.header(headers);
                 res.status(status);
-                res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+                res.json({ message: { type: "info", label: "" }, ...result });
             }
         });
     })
+
+
+//borderaus
+router
+.get('/list/borderaux')
+.get('/list/borderaux/:assurance')
 
 //Actes
 router
@@ -526,10 +597,35 @@ router
             else {
                 res.header(headers);
                 res.status(status);
-                res.json({ message: { type: "info", label: "Liste des factures actualisée" }, ...result });
+                res.json({ message: { type: "info", label: "" }, ...result });
             }
         });
     })
-
+    .post('/list/actesSejour', (req, res) => {
+        var body
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const { actesList } = body
+        console.log(body);
+        
+        if (actesList.length === 0) {
+            client.query(format("SELECT * FROM general.Actes WHERE codeActe IN ('default')", actesList), (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        } else {
+            client.query(format("SELECT * FROM general.Actes WHERE codeActe IN (%L) ORDER BY idacte", actesList), (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+    })
 
 module.exports = router

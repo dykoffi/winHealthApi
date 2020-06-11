@@ -61,5 +61,3 @@ CREATE TABLE Logs (
     heureLog VARCHAR(50),
     codeApp VARCHAR(15)
 );
-
-\i insert.sql

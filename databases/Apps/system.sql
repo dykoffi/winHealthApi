@@ -57,32 +57,65 @@ SELECT
 
 
 -- FACTURE
+-- Avoir le montant total de la facture
 CREATE OR REPLACE FUNCTION get_total_facture(numeroSejour TEXT) RETURNS INT AS 
 $$
     SELECT SUM(prixActe::INT)::INT FROM 
-    gap.Sejours, 
-    general.Actes, 
+    gap.Sejours,
+    general.Actes,
     gap.Sejour_Acte WHERE
     Sejours.numeroSejour=Sejour_Acte.numeroSejour AND
     Sejour_Acte.codeActe=Actes.codeActe AND
     Sejours.numeroSejour=$1 GROUP BY Sejours.numeroSejour
-
 $$ LANGUAGE SQL STRICT;
 
-CREATE OR REPLACE FUNCTION get_paye_facture(numeroFacture TEXT) RETURNS INT AS 
+-- Avoir la part de l'assurance pour une facture donnée
+CREATE OR REPLACE FUNCTION get_part_assurance(numeroSejour TEXT) RETURNS INT AS 
+$$
+    SELECT ((taux::INT)*(get_total_facture($1)))/100 
+    FROM gap.Sejours WHERE 
+    numeroSejour=$1
+$$ LANGUAGE SQL STRICT;
+
+-- Avoir la part du patient pour une facture donnée
+CREATE OR REPLACE FUNCTION get_part_patient(numeroSejour TEXT) RETURNS INT AS 
+$$
+    SELECT get_total_facture($1) - get_part_assurance($1)
+$$ LANGUAGE SQL STRICT;
+
+-- AVOIR LES PAIEMENT D'UN PATIENT DONNÉ
+CREATE OR REPLACE FUNCTION get_paiement_patient(numeroFacture TEXT) RETURNS INT AS 
 $$
     SELECT SUM(montantPaiement::INT)::INT FROM 
     gap.paiements,
     gap.Factures WHERE 
     numeroFacture=facturePaiement AND
+    sourcePaiement='Patient' AND
     numeroFacture=$1
 $$ LANGUAGE SQL STRICT;
 
-CREATE OR REPLACE FUNCTION get_reste_facture(numeroSejour TEXT, numeroFacture TEXT) RETURNS INT AS 
+-- AVOIR LES PAIEMENT D'UNE ASSURANCE DONNÉE
+CREATE OR REPLACE FUNCTION get_paiement_assurance(numeroFacture TEXT) RETURNS INT AS 
 $$
-    SELECT get_total_facture(numeroSejour) - get_paye_facture(numeroFacture)
+    SELECT SUM(montantPaiement::INT)::INT FROM 
+    gap.paiements,
+    gap.Factures WHERE 
+    numeroFacture=facturePaiement AND
+    sourcePaiement='Assurance' AND
+    numeroFacture=$1
 $$ LANGUAGE SQL STRICT;
 
+-- AVOIR LE RESTE DE LA FACTURE POUR LES PATIENTS
+CREATE OR REPLACE FUNCTION get_reste_patient(numeroSejour TEXT, numeroFacture TEXT) RETURNS INT AS 
+$$
+    SELECT get_part_patient(numeroSejour) - get_paiement_patient(numeroFacture)
+$$ LANGUAGE SQL STRICT;
+
+-- AVOIR LES RESTES LA FACTURES POUR LES ASSURANCES 
+CREATE OR REPLACE FUNCTION get_reste_assurance(numeroSejour TEXT, numeroFacture TEXT) RETURNS INT AS 
+$$
+    SELECT get_part_assurance(numeroSejour) - get_paiement_assurance(numeroFacture)
+$$ LANGUAGE SQL STRICT;
 
 
 --CONTROLE
@@ -101,9 +134,8 @@ $$
     SELECT (current_date - get_date_sejour($1));
 $$ LANGUAGE SQL STRICT;
 
+
 -- COMPTES
-
-
 CREATE OR REPLACE FUNCTION get_montant_compte (numeroCompte TEXT) RETURNS INT AS 
 $$
     SELECT SUM(montantTransaction::INT)::INT FROM 

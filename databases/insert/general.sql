@@ -2,17 +2,12 @@ DELETE FROM general.Etablissement;
 DELETE FROM general.Actes;
 DELETE FROM gap.Factures;
 DELETE FROM gap.Sejours;
-DELETE FROM gap.DossierAdministratif;
 
 
 INSERT INTO
     general.Etablissement (regionEtabblissement,districtEtablissement,nomEtablissement,statusEtablissement,adresseEtablissement,codePostaleEtablissement,telEtablissement,faxEtablissement,emailEtablissement,sitewebEtablissement,logoEtablissement )
 VALUES
     ('ABIDJAN 2','DS COCODY-BINGERVILLE','POLYCLINIQUE ALTEA','Centre privée de soins','Cocody angré 7ème tranche','Abidjan BP 2014','21 35 60 15','21 55 96 35','info@altea-ci.com','www.altea.com','logoAltea.jpeg');
-
---Ajouter patient
-INSERT INTO gap.DossierAdministratif 
-(nomPatient, prenomsPatient) VALUES ('koffi','edy');
 
 --Ajoutes des actes
 INSERT INTO
@@ -26,28 +21,28 @@ VALUES
 ('TAGC006','CSF','consultation','Consultation de la sage femme',13000);
 
 --Ajouter des factures
-INSERT INTO gap.Factures 
-(dateFacture,heureFacture,auteurFacture,montantTotalFacture,resteFacture) 
-VALUES
-('12-03-2020','15:30',1,15000,2500);
+-- INSERT INTO gap.Factures 
+-- (dateFacture,heureFacture,auteurFacture,montantTotalFacture,resteFacture) 
+-- VALUES
+-- ('12-03-2020','15:30',1,15000,2500);
 
 --Ajouter des sejours
-INSERT INTO gap.Sejours 
-(dateDebutSejour, 
-dateFinSejour,
-heureDebutSejour,
-heureFinSejour,
-typeSejour,
-statusSejour,
-patientSejour,
-etablissementSejour,
-factureSejour) VALUES 
-('12-05-2020','13-05-2020','15:16','15:30','consultation','en attente',1,1,1);
+-- INSERT INTO gap.Sejours 
+-- (dateDebutSejour, 
+-- dateFinSejour,
+-- heureDebutSejour,
+-- heureFinSejour,
+-- typeSejour,
+-- statusSejour,
+-- patientSejour,
+-- etablissementSejour,
+-- factureSejour) VALUES 
+-- ('12-05-2020','13-05-2020','15:16','15:30','consultation','en attente',1,1,1);
 
---Ajouter sejour acte
-INSERT INTO gap.Sejour_Acte (numeroSejour,codeActe) VALUES
-('2020143-0020S','MAGC001'),
-('2020143-0020S','MAGC002'),
-('2020143-0020S','DAGC003'),
-('2020143-0020S','DAGC004'),
-('2020143-0020S','MAGC005');
+-- --Ajouter sejour acte
+-- INSERT INTO gap.Sejour_Acte (numeroSejour,codeActe) VALUES
+-- ('2020143-0020S','MAGC001'),
+-- ('2020143-0020S','MAGC002'),
+-- ('2020143-0020S','DAGC003'),
+-- ('2020143-0020S','DAGC004'),
+-- ('2020143-0020S','MAGC005');

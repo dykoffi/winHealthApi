@@ -7,12 +7,13 @@ if (process.env.DATABASE_URL) {
     });
 } else {
     client = new Client({
-        user: 'edy',
+        user: 'psante',
         host: 'localhost',
-        database: 'mytest',
+        database: 'winhealthapp',
         password: '7859'
     })
 }
+
 client.connect((err)=>{err && console.log(err)})
 
 module.exports = client

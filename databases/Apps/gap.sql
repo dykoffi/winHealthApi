@@ -35,10 +35,7 @@ CREATE TABLE gap.DossierAdministratif (
     nomPersonnesurePatient VARCHAR(100),
     prenomsPersonnesurePatient VARCHAR(100),
     contactPersonnesurePatient VARCHAR(100),
-    qualitePersonnesurePatient VARCHAR(100),
-    -- assurance
-    assure VARCHAR(10),
-    assurance VARCHAR(50)
+    qualitePersonnesurePatient VARCHAR(100)
 );
 
 CREATE TABLE gap.DossierMedical (
@@ -51,6 +48,31 @@ CREATE TABLE gap.DossierParamedical (
     codeDossier VARCHAR(20) UNIQUE
 );
 
+CREATE TABLE gap.Assurances (
+    idAssurance SERIAL PRIMARY KEY,
+    nomAssurance VARCHAR(50),
+    codeAssurance VARCHAR(20),
+    typeAssurance VARCHAR(20),
+    faxAssurance VARCHAR(30),
+    telAssurance VARCHAR(50),
+    mailAssurance VARCHAR(30),
+    localAssurance VARCHAR(100),
+    siteAssurance VARCHAR(100)
+);
+
+CREATE TABLE gap.Borderaux (
+    idBorderau SERIAL PRIMARY KEY,
+    numeroBorderau VARCHAR(30),
+    statutBorderau VARCHAR(100),
+    dateEvnoiBorderaux VARCHAR(20),
+    dateReceptionBorderaux VARCHAR(20),
+    assuranceBorderau REFERENCES gap.Assurances (idAssurance)
+);
+
+CREATE TABLE gap.Borderau_facture (
+    idBorderau_facture SERIAL PRIMARY KEY
+);
+
 CREATE TABLE gap.Sejours (
     idSejour SERIAL PRIMARY KEY,
     numeroSejour VARCHAR(30) UNIQUE DEFAULT get_numeroSejour(),
@@ -59,15 +81,23 @@ CREATE TABLE gap.Sejours (
     heureDebutSejour VARCHAR(50),
     heureFinSejour  VARCHAR(50),
     typeSejour VARCHAR(50), -- consultation, Hospitalisation ou soins
-    statusSejour VARCHAR(20), -- en cours, termine ou annule ou les differentes attentes
-    patientSejour INTEGER REFERENCES gap.DossierAdministratif (idDossier),
-    etablissementSejour INTEGER REFERENCES general.Etablissement (idEtablissement)
+    statusSejour VARCHAR(50), -- en cours, termine ou annule ou les differentes attentes
+    patientSejour INTEGER REFERENCES gap.DossierAdministratif (idDossier) ON DELETE CASCADE,
+    etablissementSejour INTEGER REFERENCES general.Etablissement (idEtablissement) ON DELETE RESTRICT,
+    --assurance
+    gestionnaire VARCHAR(100),
+    organisme VARCHAR(100),
+    beneficiaire VARCHAR(50),
+    assurePrinc VARCHAR(100),
+    matriculeAssure VARCHAR(50),
+    numeroPEC VARCHAR(20),
+    taux INT DEFAULT 0
 );
 
 CREATE TABLE gap.Sejour_Acte (
     idSejourActe SERIAL PRIMARY KEY,
-    numeroSejour VARCHAR(20) REFERENCES gap.Sejours (numeroSejour),
-    codeActe VARCHAR(20) REFERENCES general.Actes (codeActe)
+    numeroSejour VARCHAR(20) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE,
+    codeActe VARCHAR(20) REFERENCES general.Actes (codeActe) ON DELETE CASCADE
 );
 
 CREATE TABLE gap.Factures (
@@ -76,16 +106,20 @@ CREATE TABLE gap.Factures (
     dateFacture VARCHAR(20),
     heureFacture VARCHAR(10),
     auteurFacture VARCHAR(100),
-    montantTotalFacture INT,
-    resteFacture INT,
-    sejourFacture VARCHAR(30) REFERENCES gap.Sejours (numeroSejour)
+    montantTotalFacture INT DEFAULT 0,
+    partAssuranceFacture INT DEFAULT 0,
+    partPatientFacture INT DEFAULT 0,
+    resteAssuranceFacture INT DEFAULT 0,
+    restePatientFacture INT DEFAULT 0,
+    sejourFacture VARCHAR(30) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE
 );
 
 CREATE TABLE gap.Paiements (
     idPaiement SERIAL PRIMARY KEY,
     modePaiement VARCHAR(100),
     montantPaiement VARCHAR(50),
-    facturePaiement VARCHAR(30) REFERENCES gap.Factures (numeroFacture)
+    sourcePaiement VARCHAR(30),
+    facturePaiement VARCHAR(30) REFERENCES gap.Factures (numeroFacture) ON DELETE CASCADE
 );
 
 CREATE TABLE gap.Comptes (
@@ -94,7 +128,7 @@ CREATE TABLE gap.Comptes (
     montantCompte INT DEFAULT 0,
     dateCompte VARCHAR(20),
     heureCompte VARCHAR(10),
-    patientCompte VARCHAR(20) REFERENCES gap.DossierAdministratif (ippPatient)
+    patientCompte VARCHAR(20) REFERENCES gap.DossierAdministratif (ippPatient) ON DELETE CASCADE
 );
 
 CREATE TABLE gap.Transactions (
@@ -104,7 +138,7 @@ CREATE TABLE gap.Transactions (
     montantTransaction INT,
     modeTransaction VARCHAR(20),
     typeTransaction VARCHAR(20),
-    compteTransaction VARCHAR(20) REFERENCES gap.Comptes (numeroCompte)
+    compteTransaction VARCHAR(20) REFERENCES gap.Comptes (numeroCompte) ON DELETE CASCADE
 );
 
 CREATE TABLE gap.Controles (
@@ -115,15 +149,5 @@ CREATE TABLE gap.Controles (
     heureFinControle VARCHAR(20),
     typeControle VARCHAR(30)  DEFAULT 'Controle',   
     statutControle VARCHAR(30) DEFAULT 'attente(infirmier)',
-    sejourControle VARCHAR(20) REFERENCES gap.Sejours (numeroSejour)
-);
-
-CREATE TABLE gap.Assurances (
-    idAssurance SERIAL PRIMARY KEY,
-    nomAssurance VARCHAR(50),
-    codeAssurance VARCHAR(20),
-    faxAssurance VARCHAR(30),
-    contactAsssurance VARCHAR(50),
-    mailAssurance VARCHAR(30),
-    localAssurance VARCHAR(100)
+    sejourControle VARCHAR(20) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE
 );

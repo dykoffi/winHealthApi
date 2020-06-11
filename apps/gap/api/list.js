@@ -38,6 +38,10 @@ exports.list_actes = {
     text: "SELECT * FROM general.Actes"
 }
 
+exports.list_actesSejour= {
+    name: "list_actesSejour",
+    text: "SELECT * FROM general.Actes WHERE codeActe IN ($1)"
+}
 //TODO : FACTURES
 exports.list_all_factures = {
     name: "list_all_factures",
@@ -52,7 +56,7 @@ exports.list_factures_attentes = {
     WHERE 
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
-        restefacture<>0 AND
+        restePatientFacture<>0 AND
         Sejours.statusSejour='en attente' ORDER BY idFacture`
 }
 exports.details_facture = {
@@ -127,6 +131,12 @@ exports.details_compte = {
     name:'details_comptes',
     text:`SELECT * FROM gap.Comptes, gap.DossierAdministratif
         WHERE Comptes.patientCompte=DossierAdministratif.ippPatient AND Comptes.numeroCompte=$1`
+}
+
+//TODO : BORDERAUX
+exports.list_factures_by_assurances = {
+    name : "list_factures_by_assurances",
+    text : `SELECT * FROM `
 }
 
 //TODO : ASSURANCES
