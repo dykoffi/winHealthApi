@@ -1,4 +1,3 @@
-
 //TODO : PATIENTS
 exports.list_patient = {
     name: "list_patient",
@@ -38,15 +37,16 @@ exports.list_actes = {
     text: "SELECT * FROM general.Actes"
 }
 
-exports.list_actesSejour= {
-    name: "list_actesSejour",
-    text: "SELECT * FROM general.Actes WHERE codeActe IN ($1)"
-}
-//TODO : FACTURES
+exports.list_actesSejour = {
+        name: "list_actesSejour",
+        text: "SELECT * FROM general.Actes WHERE codeActe IN ($1)"
+    }
+    //TODO : FACTURES
 exports.list_all_factures = {
     name: "list_all_factures",
     text: `SELECT * FROM gap.Factures`
 }
+
 exports.list_factures_attentes = {
     name: "list_factures_attentes",
     text: `SELECT * FROM 
@@ -56,9 +56,52 @@ exports.list_factures_attentes = {
     WHERE 
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
-        restePatientFacture<>0 AND
-        Sejours.statusSejour='en attente' ORDER BY idFacture`
+        restePatientFacture<>0 ORDER BY idFacture`
 }
+
+exports.list_factures_patient = {
+    name: "list_factures_patient",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    gap.Sejours,
+    gap.DossierAdministratif
+    WHERE 
+        patientSejour=idDossier AND
+        sejourFacture=numeroSejour AND
+        ipppatient=$1  ORDER BY idFacture`
+}
+
+exports.list_factures_payees_patient = {
+    name: "list_factures_payees_patient",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    gap.Sejours,
+    gap.DossierAdministratif
+    WHERE 
+        patientSejour=idDossier AND
+        sejourFacture=numeroSejour AND
+        restePatientFacture=0 AND
+        ipppatient=$1 ORDER BY idFacture`
+}
+
+exports.list_factures_impayees_patient = {
+    name: "list_factures_impayees_patient",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    gap.Sejours,
+    gap.DossierAdministratif
+    WHERE 
+        patientSejour=idDossier AND
+        sejourFacture=numeroSejour AND
+        restePatientFacture<>0 AND
+        ipppatient=$1 ORDER BY idFacture`
+}
+
+exports.verify_compte = {
+    name: "verify_facture",
+    text: `SELECT * FROM gap.DossierAdministratif LEFT OUTER JOIN  gap.Comptes ON ipppatient=patientcompte WHERE ipppatient=$1`
+}
+
 exports.details_facture = {
     name: "details_facture",
     text: `SELECT * FROM 
@@ -71,6 +114,7 @@ exports.details_facture = {
         Sejours.statusSejour='en attente' AND
         numeroFacture=$1`
 }
+
 exports.imprimer_facture = {
     name: "imprimer_facture",
     text: `SELECT * FROM 
@@ -110,8 +154,8 @@ exports.verify_facture = {
 
 //TODO : CONTROLES
 exports.list_controles = {
-    names:"list_controles",
-    text:"SELECT * FROM controles"
+    names: "list_controles",
+    text: "SELECT * FROM controles"
 }
 
 //TODO : COMPTES 
@@ -123,28 +167,35 @@ exports.list_patient_no_compte = {
             WHERE patientCompte ISNULL`
 }
 exports.list_comptes = {
-    name:'list_comptes',
-    text:`SELECT * FROM gap.Comptes, gap.DossierAdministratif
+    name: 'list_comptes',
+    text: `SELECT * FROM gap.Comptes, gap.DossierAdministratif
         WHERE Comptes.patientCompte=DossierAdministratif.ippPatient ORDER BY idCompte`
 }
 exports.details_compte = {
-    name:'details_comptes',
-    text:`SELECT * FROM gap.Comptes, gap.DossierAdministratif
+    name: 'details_comptes',
+    text: `SELECT * FROM gap.Comptes, gap.DossierAdministratif
         WHERE Comptes.patientCompte=DossierAdministratif.ippPatient AND Comptes.numeroCompte=$1`
 }
 
 //TODO : BORDERAUX
 exports.list_factures_by_assurances = {
-    name : "list_factures_by_assurances",
-    text : `SELECT * FROM `
+    name: "list_factures_by_assurances",
+    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
+            WHERE
+                Factures.sejourFacture = Sejours.numeroSejour AND
+                Sejours.gestionnaire = Assurances.nomAssurance AND
+                DossierAdministratif.idDossier = Sejours.patientSejour AND
+                Assurances.nomAssurance = $1 AND
+                Factures.dateFacture::date >= $2::date AND Factures.dateFacture::date <= $3::date
+        `
 }
 
 //TODO : ASSURANCES
 exports.list_assurances = {
-    name : "list_assurances",
-    text : `SELECT * FROM gap.Assurances`
+    name: "list_assurances",
+    text: `SELECT * FROM gap.Assurances`
 }
 exports.details_assurance = {
-    name : "details_assurance",
-    text : `SELECT * FROM gap.Assurances WHERE idAssurance=$1`
+    name: "details_assurance",
+    text: `SELECT * FROM gap.Assurances WHERE idAssurance=$1`
 }

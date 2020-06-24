@@ -27,18 +27,24 @@ const {
     list_actesSejour,
     list_all_factures,
     list_factures_attentes,
+    list_factures_patient,
+    list_factures_payees_patient,
+    list_factures_impayees_patient,
     list_patient_no_compte,
     list_assurances,
     list_controles,
+    list_factures_by_assurances,
     //details
     details_patient,
     details_sejour,
     details_facture,
     details_compte,
+    details_assurance,
     //autres
     imprimer_facture,
     annuler_facture,
     verify_facture,
+    verify_compte
 } = require("../apps/gap/api/list");
 const {
     search_patient,
@@ -68,7 +74,7 @@ moment.locale('fr')
 //patient
 router
     .post('/add/patient', function (req, res) {
-        const body = JSON.parse(Object.keys(req.body)[0])
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const {
             nom,
             prenoms,
@@ -158,7 +164,7 @@ router
 //sejours
 router
     .post('/add/sejour/:patient', (req, res) => {
-        const body = JSON.parse(Object.keys(req.body)[0])
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const {
             type,
             actes,
@@ -192,29 +198,30 @@ router
             matriculeAssure,
             numeroPEC,
             taux,
-            1], (err, result) => {
-                if (err) {
-                    console.log(err)
-                } else {
-                    const sejour = result.rows[0].numerosejour
-                    actes.forEach(acte => {
-                        client.query(add_sejour_acte, [sejour, acte], (err, result) => { })
-                    });
+            1
+        ], (err, result) => {
+            if (err) {
+                console.log(err)
+            } else {
+                const sejour = result.rows[0].numerosejour
+                actes.forEach(acte => {
+                    client.query(add_sejour_acte, [sejour, acte], (err, result) => { })
+                });
 
-                    client.query(add_facture, [
-                        moment().format('DD-MM-YYYY'),
-                        moment().format('hh:mm'),
-                        nomuser + " " + prenomsuser,
-                        sejour
-                    ], (err, result) => {
-                        if (err) { console.log(err) } else {
-                            res.header(headers);
-                            res.status(status);
-                            res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
-                        }
-                    })
-                }
-            });
+                client.query(add_facture, [
+                    moment().format('DD-MM-YYYY'),
+                    moment().format('hh:mm'),
+                    nomuser + " " + prenomsuser,
+                    sejour
+                ], (err, result) => {
+                    if (err) { console.log(err) } else {
+                        res.header(headers);
+                        res.status(status);
+                        res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
+                    }
+                })
+            }
+        });
     })
     .get('/list/sejours/:patient', (req, res) => {
         client.query(list_sejours, [req.params.patient], (err, result) => {
@@ -237,7 +244,7 @@ router
 //controles 
 router
     .post("/add/controle/:sejour", (req, res) => {
-        const body = JSON.parse(Object.keys(req.body)[0])
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const {
             datedebut,
             heureDebut,
@@ -278,8 +285,18 @@ router
             res.json({ message: { type: "info", label: "Liste des comptes actualisée" }, ...result });
         });
     })
+    .get("/verify/compte/:patient", (req, res) => {
+        client.query(verify_compte, [req.params.patient], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "Liste des comptes actualisée" }, ...result });
+            }
+        });
+    })
     .post("/add/compte", (req, res) => {
-        const body = JSON.parse(Object.keys(req.body)[0])
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const {
             ipp
         } = body
@@ -291,10 +308,11 @@ router
         });
     })
 
+
 //TRANSACTION
 router
     .post("/add/transaction", (req, res) => {
-        const body = JSON.parse(Object.keys(req.body)[0])
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const {
             montant,
             type,
@@ -342,6 +360,30 @@ router
             res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
+    .get('/list/factures_patient/:ipppatient', (req, res) => {
+        client.query(list_factures_patient, [req.params.ipppatient], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: " " }, ...result });
+        });
+    })
+    .get('/list/factures_payees_patient/:ipppatient', (req, res) => {
+        client.query(list_factures_payees_patient, [req.params.ipppatient], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: " " }, ...result });
+        });
+    })
+    .get('/list/factures_impayees_patient/:ipppatient', (req, res) => {
+        client.query(list_factures_impayees_patient, [req.params.ipppatient], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: " " }, ...result });
+        });
+    })
     .get('/details/facture/:numeroFacture', (req, res) => {
         client.query(details_facture, [req.params.numeroFacture], (err, result) => {
             err && console.log(err)
@@ -356,10 +398,20 @@ router
             res.header(headers);
             res.status(status);
             res.json({ message: { type: "info", label: " " }, ...result });
+        
+        
+        
+        
+        
+        
+        
+        
         });
     })
     .post('/encaisser_patient/facture/:numeroFacture', (req, res) => {
-        const body = JSON.parse(Object.keys(req.body)[0])
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        console.log(body);
+
         const { modepaiement, montantrecu, compte } = body
         client.query(encaisser_patient_facture, [modepaiement, montantrecu, req.params.numeroFacture], (err, result) => {
             if (err) console.log(err)
@@ -391,8 +443,38 @@ router
             }
         });
     })
+    .post('/encaisser_patient/all_factures', (req, res) => {
+        var body = []
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        client.query(format(`INSERT INTO gap.Paiements (modePaiement,sourcePaiement,montantPaiement,facturePaiement) VALUES %L`, body), (err, result) => {
+            if (err) console.log(err)
+            else {
+                body.map(([modepaiement, sourcepaiement, montantrecu, numerofacture]) =>
+                    client.query(update_patient_facture, [numerofacture], (err, result) => {
+                        if (err) console.log(err)
+                        else {
+                            if (modepaiement === "Compte") {
+                                client.query(add_transaction, [moment().format('DD-MM-YYYY'), moment().format('hh:ss'), '-' + montantrecu, 'Retrait', 'Paiement facture', compte], (err, result) => {
+                                    if (err) {
+                                        console.log(err)
+                                    } else {
+                                        client.query(update_compte, [compte], (err, result) => {
+                                            if (err) console.log(err)
+
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    }))
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "Facture encaissée" }, ...result });
+            }
+        });
+    })
     .post('/encaisser_assurance/facture/:numeroFacture', (req, res) => {
-        const body = JSON.parse(Object.keys(req.body)[0])
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const { modepaiement, montantrecu, compte } = body
         client.query(encaisser_assurance_facture, [modepaiement, montantrecu, req.params.numeroFacture], (err, result) => {
             if (err) console.log(err)
@@ -484,64 +566,35 @@ router
         });
     })
 
+
 //Assurances
 router
     .post("/add/assurance", (req, res) => {
-        const body = JSON.parse(Object.keys(req.body)[0])
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         console.log(body)
-        const {
-            nom,
-            code,
-            type,
-            fax,
-            telephone,
-            mail,
-            adresse,
-            site_web
-        } = body
-        client.query(add_assurance, [
-            nom,
-            code,
-            type,
-            fax,
-            telephone,
-            mail,
-            adresse,
-            site_web], (err, result) => {
-                if (err) console.log(err)
-                else {
-                    res.header(headers);
-                    res.status(status);
-                    res.json({ message: { type: "info", label: "" }, ...result });
-                }
-            });
+        const { nom, code, type, fax, telephone, mail, adresse, site_web } = body
+        client.query(add_assurance, [nom, code, type, fax, telephone, mail, adresse, site_web], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
     })
-    .put("/update/assurance/:idAssurance", (req, res) => {
-        const body = JSON.parse(Object.keys(req.body)[0])
-        console.log(body)
-        const {
-            nomAssurance,
-            codeAssurance,
-            faxAssurance,
-            contactAsssurance,
-            mailAssurance,
-            localAssurance
-        } = body
-        client.query(update_assurance, [req.params.idAssurance], [nomAssurance,
-            codeAssurance,
-            faxAssurance,
-            contactAsssurance,
-            mailAssurance,
-            localAssurance], (err, result) => {
-                if (err) console.log(err)
-                else {
-                    res.header(headers);
-                    res.status(status);
-                    res.json({ message: { type: "info", label: "" }, ...result });
-                }
-            });
+    .post("/update/assurance/:idAssurance", (req, res) => {
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const { nom, code, type, fax, telephone, mail, adresse, site_web } = body
+        client.query(update_assurance, [nom, code, type, fax, telephone, mail, adresse, site_web, req.params.idAssurance], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
     })
-    .delete('/delete/assurance/:idAssurance', (req, res) => {
+    .get('/delete/assurance/:idAssurance', (req, res) => {
         client.query(delete_assurance, [req.params.idAssurance], (err, result) => {
             if (err) console.log(err)
             else {
@@ -553,7 +606,6 @@ router
     })
     .get('/list/assurances', (req, res) => {
         client.query(list_assurances, (err, result) => {
-            console.log("list des assurances")
             if (err) console.log(err)
             else {
                 res.header(headers);
@@ -586,8 +638,26 @@ router
 
 //borderaus
 router
-.get('/list/borderaux')
-.get('/list/borderaux/:assurance')
+    // .get('/list/borderaux/:assurances', (req, res) => {
+    //     client.query(search_assurance, [req.params.info], (err, result) => {
+    //         if (err) console.log(err)
+    //         else {
+    //             res.header(headers);
+    //             res.status(status);
+    //             res.json({ message: { type: "info", label: "" }, ...result });
+    //         }
+    //     });
+    // })
+    .get('/list/factures/:assurance/:dateDebut/:dateFin', (req, res) => {
+        client.query(list_factures_by_assurances, [req.params.assurance, req.params.dateDebut, req.params.dateFin], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
+    })
 
 //Actes
 router
@@ -606,7 +676,7 @@ router
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const { actesList } = body
         console.log(body);
-        
+
         if (actesList.length === 0) {
             client.query(format("SELECT * FROM general.Actes WHERE codeActe IN ('default')", actesList), (err, result) => {
                 if (err) console.log(err)

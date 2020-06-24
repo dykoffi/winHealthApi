@@ -50,7 +50,7 @@ CREATE TABLE gap.DossierParamedical (
 
 CREATE TABLE gap.Assurances (
     idAssurance SERIAL PRIMARY KEY,
-    nomAssurance VARCHAR(50),
+    nomAssurance VARCHAR(50) NOT NULL,
     codeAssurance VARCHAR(20),
     typeAssurance VARCHAR(20),
     faxAssurance VARCHAR(30),
@@ -58,19 +58,6 @@ CREATE TABLE gap.Assurances (
     mailAssurance VARCHAR(30),
     localAssurance VARCHAR(100),
     siteAssurance VARCHAR(100)
-);
-
-CREATE TABLE gap.Borderaux (
-    idBorderau SERIAL PRIMARY KEY,
-    numeroBorderau VARCHAR(30),
-    statutBorderau VARCHAR(100),
-    dateEvnoiBorderaux VARCHAR(20),
-    dateReceptionBorderaux VARCHAR(20),
-    assuranceBorderau REFERENCES gap.Assurances (idAssurance)
-);
-
-CREATE TABLE gap.Borderau_facture (
-    idBorderau_facture SERIAL PRIMARY KEY
 );
 
 CREATE TABLE gap.Sejours (
@@ -117,7 +104,7 @@ CREATE TABLE gap.Factures (
 CREATE TABLE gap.Paiements (
     idPaiement SERIAL PRIMARY KEY,
     modePaiement VARCHAR(100),
-    montantPaiement VARCHAR(50),
+    montantPaiement VARCHAR(50) NOT NULL,
     sourcePaiement VARCHAR(30),
     facturePaiement VARCHAR(30) REFERENCES gap.Factures (numeroFacture) ON DELETE CASCADE
 );

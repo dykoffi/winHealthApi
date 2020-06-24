@@ -52,6 +52,7 @@ exports.encaisser_patient_facture = {
     name: "encaisser_patient_facture",
     text: `INSERT INTO gap.Paiements (modePaiement,sourcePaiement,montantPaiement,facturePaiement) VALUES($1,'Patient',$2,$3)`
 }
+
 exports.encaisser_assurance_facture = {
     name: "encaisser_assurance_facture",
     text: `INSERT INTO gap.Paiements (modePaiement,sourcePaiement,montantPaiement,facturePaiement) VALUES($1,'Assurance',$2,$3)`

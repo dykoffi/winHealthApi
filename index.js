@@ -1,7 +1,13 @@
 const app = require('./app');
+const fs = require('fs')
 const debug = require('debug')('api:server');
-const http = require('http');
+const https = require('https');
+const child = require('child_process')
 
+child.exec('hostname -I', (err, result) => {
+    console.log(result);
+
+})
 /**
  const fs = require('fs');
  * Get port from environment and store in Express.
@@ -14,10 +20,15 @@ const http = require('http');
 const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 
-const server = http.createServer(app);
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+const server =
+    https
+        .createServer({
+            key: fs.readFileSync('./key.pem'),
+            cert: fs.readFileSync('./cert.pem')
+        }, app)
+        .listen(port)
+        .on('error', onError)
+        .on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -89,6 +100,14 @@ io.sockets.on("connection", function (socket, pseudo) {
     })
     socket.on("constantes_add", ({ sejour, patient }) => {
         socket.broadcast.emit("nouveau_patient", { sejour, patient })
+    })
+
+    socket.on('project_facture', (facture) => {
+        socket.broadcast.emit("project_facture",facture)
+    })
+
+    socket.on('valid_paiement', (nof,montant) => {
+        socket.broadcast.emit("valid_paiement",nof,montant)
     })
 
 })

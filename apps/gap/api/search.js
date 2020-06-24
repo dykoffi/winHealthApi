@@ -52,6 +52,6 @@ exports.search_compte = {
 //TODO : ASSURANCES
 exports.search_assurance = {
     name : "search_assurance",
-    text : ``
+    text : `SELECT * FROM gap.Assurances WHERE nomAssurance ~* $1`
 }
 

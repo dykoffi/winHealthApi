@@ -25,5 +25,5 @@ exports.delete_compte = {
 //TODO : ASSURANCES 
 exports.delete_assurance = {
     name : 'delete_assurance',
-    text : `DELETE FROM gap.Assurance WHERE idAssurance=$1`
+    text : `DELETE FROM gap.Assurances WHERE idAssurance=$1`
 }
