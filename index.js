@@ -4,10 +4,7 @@ const debug = require('debug')('api:server');
 const http = require('http');
 const child = require('child_process')
 
-child.exec('hostname -I', (err, result) => {
-    console.log(result);
-
-})
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
