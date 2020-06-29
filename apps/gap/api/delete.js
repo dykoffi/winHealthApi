@@ -1,7 +1,7 @@
 //TODO : PATIENTS 
 exports.delete_patient = {
     name : 'delete_patient',
-    text : `DELETE FROM gap.DossierAdministratif WHERE ippPatient=$1`
+    text : `DELETE FROM gap.DossierAdministratif WHERE ipppatient=$1`
 }
 
 //TODO : SEJOURS 

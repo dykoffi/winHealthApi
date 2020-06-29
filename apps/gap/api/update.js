@@ -27,3 +27,33 @@ exports.update_assurance = {
         siteAssurance = $8
          WHERE idAssurance=$9`
 }
+
+exports.update_patient = {
+    name: "modif_patient",
+    text: `UPDATE gap.DossierAdministratif SET 
+    nomPatient = $1,
+    prenomsPatient =$2,
+    civilitePatient =$3,
+    sexePatient =$4,
+    dateNaissancePatient =$5,
+    lieuNaissancePatient =$6,
+    nationalitePatient =$7,
+    professionPatient =$8,
+    situationMatrimonialePatient =$9,
+    religionPatient =$10,
+    habitationPatient =$11,
+    contactPatient =$12,
+     nomPerePatient =$13,
+    prenomsPerePatient =$14,
+    contactPerePatient =$15,
+    nomMerePatient =$16,
+    prenomsMerePatient =$17,
+    contactMerePatient =$18,
+    nomTuteurPatient =$19,
+    prenomsTuteurPatient =$20,
+    contactTuteurPatient =$21,
+    nomPersonnesurePatient =$22,
+    prenomsPersonnesurePatient =$23,
+    contactPersonnesurePatient =$24,
+    qualitePersonnesurePatient =$25 WHERE ipppatient=$26 RETURNING idDossier`
+}

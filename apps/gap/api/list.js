@@ -5,7 +5,7 @@ exports.list_patient = {
 }
 exports.details_patient = {
     name: "details_patient",
-    text: `SELECT * FROM gap.DossierAdministratif WHERE idDossier=$1`
+    text: `SELECT * FROM gap.DossierAdministratif WHERE ipppatient=$1`
 }
 exports.dossiers_patient = {
     name: "dossiers_patient",

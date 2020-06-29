@@ -136,6 +136,70 @@ router
             res.json({ message: { type: "success", label: "nouveau patient enregistré" }, ...result });
         });
     })
+    .post('/update/patient/:ipppatient', function (req, res) {
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const {
+            nom,
+            prenoms,
+            civilite,
+            sexe,
+            datenaissance,
+            lieunaissance,
+            nationalite,
+            habitation,
+            contact,
+            situation,
+            religion,
+            profession,
+            nompere,
+            prenomspere,
+            contactpere,
+            nommere,
+            prenomsmere,
+            contactmere,
+            nomtuteur,
+            prenomstuteur,
+            contacttuteur,
+            nompersonnesure,
+            prenomspersonnesure,
+            contactpersonnesure,
+            qualitepersonnesure,
+
+        } = body
+        client.query(update_patient, [
+            nom,
+            prenoms,
+            civilite,
+            sexe,
+            moment(datenaissance).format("DD-MM-YYYY"),
+            lieunaissance,
+            nationalite,
+            profession,
+            situation,
+            religion,
+            habitation,
+            contact,
+            nompere,
+            prenomspere,
+            contactpere,
+            nommere,
+            prenomsmere,
+            contactmere,
+            nomtuteur,
+            prenomstuteur,
+            contacttuteur,
+            nompersonnesure,
+            prenomspersonnesure,
+            contactpersonnesure,
+            qualitepersonnesure,
+            req.params.ipppatient
+        ], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "success", label: "nouveau patient enregistré" }, ...result });
+        });
+    })
     .get('/list/patients', (req, res) => {
         client.query(list_patient, (err, result) => {
             err && console.log(err)
@@ -144,8 +208,16 @@ router
             res.json({ message: { type: "info", label: "Liste des patients actualisée" }, ...result });
         });
     })
-    .get('/details/patient/:id', (req, res) => {
-        client.query(details_patient, [req.params.id], (err, result) => {
+    .get('/delete/patient/:ipppatient', (req, res) => {
+        client.query(delete_patient, [req.params.ipppatient], (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: "Liste des patients actualisée" }, ...result });
+        });
+    })
+    .get('/details/patient/:ipppatient', (req, res) => {
+        client.query(details_patient, [req.params.ipppatient], (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);
@@ -398,14 +470,14 @@ router
             res.header(headers);
             res.status(status);
             res.json({ message: { type: "info", label: " " }, ...result });
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
         });
     })
     .post('/encaisser_patient/facture/:numeroFacture', (req, res) => {
@@ -446,6 +518,7 @@ router
     .post('/encaisser_patient/all_factures', (req, res) => {
         var body = []
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const compte = body.pop()
         client.query(format(`INSERT INTO gap.Paiements (modePaiement,sourcePaiement,montantPaiement,facturePaiement) VALUES %L`, body), (err, result) => {
             if (err) console.log(err)
             else {

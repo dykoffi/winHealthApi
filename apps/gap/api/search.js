@@ -3,6 +3,7 @@ exports.search_patient = {
     name: "search_patient",
     text: `SELECT 
     idDossier,
+    civilitepatient,
     ippPatient,
     nomPatient, 
     prenomsPatient,

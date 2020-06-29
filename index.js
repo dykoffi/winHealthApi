@@ -1,31 +1,20 @@
 const app = require('./app');
 const fs = require('fs')
 const debug = require('debug')('api:server');
-const https = require('https');
+const http = require('http');
 const child = require('child_process')
 
 child.exec('hostname -I', (err, result) => {
     console.log(result);
 
 })
-/**
- const fs = require('fs');
- * Get port from environment and store in Express.
- const options = {
-   key: fs.readFileSync('key.pem'),
-   cert: fs.readFileSync('cert.pem')
- };
- */
 
 const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 
 const server =
-    https
-        .createServer({
-            key: fs.readFileSync('./key.pem'),
-            cert: fs.readFileSync('./cert.pem')
-        }, app)
+    http
+        .createServer(app)
         .listen(port)
         .on('error', onError)
         .on('listening', onListening);
@@ -103,11 +92,11 @@ io.sockets.on("connection", function (socket, pseudo) {
     })
 
     socket.on('project_facture', (facture) => {
-        socket.broadcast.emit("project_facture",facture)
+        socket.broadcast.emit("project_facture", facture)
     })
 
-    socket.on('valid_paiement', (nof,montant) => {
-        socket.broadcast.emit("valid_paiement",nof,montant)
+    socket.on('valid_paiement', (nof, montant) => {
+        socket.broadcast.emit("valid_paiement", nof, montant)
     })
 
 })
