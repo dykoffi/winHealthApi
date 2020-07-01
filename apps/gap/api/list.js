@@ -19,7 +19,7 @@ exports.list_sejours = {
 }
 exports.details_sejour = {
     name: "details_sejour",
-    text: `SELECT get_delai_controle($2) delai,  get_controle_sejour($2) nbcontrole, * FROM 
+    text: `SELECT get_delai_controle($1) delai,  get_controle_sejour($1) nbcontrole, * FROM 
     gap.Factures, 
     general.Actes, 
     gap.Sejours, 
@@ -29,7 +29,7 @@ exports.details_sejour = {
         sejourFacture=numeroSejour AND
         etablissementSejour=idEtablissement AND
         patientSejour=idDossier AND
-        Sejours.idSejour=$1  
+        Sejours.numeroSejour=$1  
     `
 }
 exports.list_actes = {
@@ -186,7 +186,8 @@ exports.list_factures_by_assurances = {
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
                 Assurances.nomAssurance = $1 AND
-                Factures.dateFacture::date >= $2::date AND Factures.dateFacture::date <= $3::date
+                Factures.dateFacture::date >= $2::date AND Factures.dateFacture::date <= $3::date AND
+                Sejours.typesejour = $4
         `
 }
 

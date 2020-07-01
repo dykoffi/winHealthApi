@@ -89,7 +89,9 @@ io.sockets.on("connection", function (socket, pseudo) {
     })
 
     socket.on('project_facture', (facture) => {
-        socket.broadcast.emit("project_facture", facture)
+        console.log("facturation");
+        
+        socket.emit("project_facture", facture)
     })
 
     socket.on('valid_paiement', (nof, montant) => {

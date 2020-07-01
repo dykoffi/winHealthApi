@@ -303,8 +303,8 @@ router
             res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
         });
     })
-    .get('/details/sejour/:idsejour/:numerosejour', (req, res) => {
-        client.query(details_sejour, [req.params.idsejour, req.params.numerosejour], (err, result) => {
+    .get('/details/sejour/:numerosejour', (req, res) => {
+        client.query(details_sejour, [req.params.numerosejour], (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);
@@ -721,8 +721,8 @@ router
     //         }
     //     });
     // })
-    .get('/list/factures/:assurance/:dateDebut/:dateFin', (req, res) => {
-        client.query(list_factures_by_assurances, [req.params.assurance, req.params.dateDebut, req.params.dateFin], (err, result) => {
+    .get('/list/factures/:assurance/:dateDebut/:dateFin/:typesejour', (req, res) => {
+        client.query(list_factures_by_assurances, [req.params.assurance, req.params.dateDebut, req.params.dateFin, req.params.typesejour], (err, result) => {
             if (err) console.log(err)
             else {
                 res.header(headers);
@@ -748,8 +748,6 @@ router
         var body
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const { actesList } = body
-        console.log(body);
-
         if (actesList.length === 0) {
             client.query(format("SELECT * FROM general.Actes WHERE codeActe IN ('default')", actesList), (err, result) => {
                 if (err) console.log(err)

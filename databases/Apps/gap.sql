@@ -138,3 +138,16 @@ CREATE TABLE gap.Controles (
     statutControle VARCHAR(30) DEFAULT 'attente(infirmier)',
     sejourControle VARCHAR(20) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE
 );
+
+CREATE TABLE gap.Bordereaux (
+    idBordereau SERIAL PRIMARY KEY,
+    numeroBordereau VARCHAR(20) UNIQUE DEFAULT get_numeroBordereau(),
+    dateCreationBordereau VARCHAR(30),
+    derniereModifBordereau VARCHAR(20),
+);
+
+CREATE TABLE gap.Factures_Bordereau (
+    idFacturesbordereau SERIAL PRIMARY KEY,
+    statutFacture VARCHAR(50),
+    numeroBordereau VARCHAR(20) REFERENCES gap.Bordereau(numeroBordereau) ON DELETE CASCADE
+);

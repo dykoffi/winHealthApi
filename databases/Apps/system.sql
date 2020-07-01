@@ -25,7 +25,7 @@ SELECT
             current_date + 1 - (concat(rpad(current_date :: TEXT, 4), '-01-01')) :: DATE
         ) :: TEXT,
         '-',
-        lpad(nextval('numeroSejour_sequence')::TEXT,4,'000'),
+        lpad(nextval('numeroSejour_sequence')::TEXT,4,'00000'),
         'S'
     ) $$ LANGUAGE SQL STRICT;
 
@@ -36,8 +36,18 @@ CREATE SEQUENCE NumeroFacture_sequence MINVALUE 1 MAXVALUE 9999 START 1;
 CREATE FUNCTION get_NumeroFacture() RETURNS TEXT AS $$
 SELECT 
      concat(
-        lpad(nextval('numeroFacture_sequence')::TEXT,4,'000'),
+        lpad(nextval('numeroFacture_sequence')::TEXT,4,'00000'),
         'F'
+    ) $$ LANGUAGE SQL STRICT;
+
+DROP FUNCTION get_NumeroBordereau CASCADE;
+DROP SEQUENCE NumeroBordereau_sequence;
+CREATE SEQUENCE NumeroBordereau_sequence MINVALUE 1 MAXVALUE 9999 START 1;
+CREATE FUNCTION get_NumeroBordereau() RETURNS TEXT AS $$
+SELECT 
+     concat(
+        lpad(nextval('numeroBordereau_sequence')::TEXT,4,'00000'),
+        'B'
     ) $$ LANGUAGE SQL STRICT;
 
 DROP FUNCTION get_numeroCompte CASCADE;
