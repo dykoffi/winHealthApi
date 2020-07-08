@@ -106,3 +106,18 @@ exports.add_assurance = {
         siteAssurance
     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`
 }
+
+//BORDEREAUX
+
+exports.add_bordereau = {
+    name: 'add_bordereau',
+    text: `INSERT INTO gap.Bordereaux (
+        dateCreationBordereau,
+        heureCreationBordereau,
+        dateLimiteBordereau,
+        gestionnaireBordereau,
+        organismeBordereau,
+        typeSejourBordereau,
+        statutBordereau
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING numeroBordereau`
+}

@@ -1,7 +1,5 @@
 DROP SCHEMA gap CASCADE;
-
 CREATE SCHEMA gap;
-
 CREATE TABLE gap.DossierAdministratif (
     -- dossier
     idDossier SERIAL PRIMARY KEY,
@@ -37,17 +35,14 @@ CREATE TABLE gap.DossierAdministratif (
     contactPersonnesurePatient VARCHAR(100),
     qualitePersonnesurePatient VARCHAR(100)
 );
-
 CREATE TABLE gap.DossierMedical (
     idDossier SERIAL PRIMARY KEY,
     codeDossier VARCHAR(20) UNIQUE
 );
-
 CREATE TABLE gap.DossierParamedical (
     idDossier SERIAL PRIMARY KEY,
     codeDossier VARCHAR(20) UNIQUE
 );
-
 CREATE TABLE gap.Assurances (
     idAssurance SERIAL PRIMARY KEY,
     nomAssurance VARCHAR(50) NOT NULL,
@@ -59,16 +54,17 @@ CREATE TABLE gap.Assurances (
     localAssurance VARCHAR(100),
     siteAssurance VARCHAR(100)
 );
-
 CREATE TABLE gap.Sejours (
     idSejour SERIAL PRIMARY KEY,
     numeroSejour VARCHAR(30) UNIQUE DEFAULT get_numeroSejour(),
     dateDebutSejour VARCHAR(50),
-    dateFinSejour  VARCHAR(50),
+    dateFinSejour VARCHAR(50),
     heureDebutSejour VARCHAR(50),
-    heureFinSejour  VARCHAR(50),
-    typeSejour VARCHAR(50), -- consultation, Hospitalisation ou soins
-    statusSejour VARCHAR(50), -- en cours, termine ou annule ou les differentes attentes
+    heureFinSejour VARCHAR(50),
+    typeSejour VARCHAR(50),
+    -- consultation, Hospitalisation ou soins
+    statusSejour VARCHAR(50),
+    -- en cours, termine ou annule ou les differentes attentes
     patientSejour INTEGER REFERENCES gap.DossierAdministratif (idDossier) ON DELETE CASCADE,
     etablissementSejour INTEGER REFERENCES general.Etablissement (idEtablissement) ON DELETE RESTRICT,
     --assurance
@@ -80,13 +76,11 @@ CREATE TABLE gap.Sejours (
     numeroPEC VARCHAR(20),
     taux INT DEFAULT 0
 );
-
 CREATE TABLE gap.Sejour_Acte (
     idSejourActe SERIAL PRIMARY KEY,
     numeroSejour VARCHAR(20) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE,
     codeActe VARCHAR(20) REFERENCES general.Actes (codeActe) ON DELETE CASCADE
 );
-
 CREATE TABLE gap.Factures (
     idFacture SERIAL PRIMARY KEY,
     numeroFacture VARCHAR(100) UNIQUE DEFAULT get_numeroFacture(),
@@ -98,9 +92,9 @@ CREATE TABLE gap.Factures (
     partPatientFacture INT DEFAULT 0,
     resteAssuranceFacture INT DEFAULT 0,
     restePatientFacture INT DEFAULT 0,
+    statutFactures VARCHAR(50) DEFAULT 'attente',
     sejourFacture VARCHAR(30) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE
 );
-
 CREATE TABLE gap.Paiements (
     idPaiement SERIAL PRIMARY KEY,
     modePaiement VARCHAR(100),
@@ -108,18 +102,16 @@ CREATE TABLE gap.Paiements (
     sourcePaiement VARCHAR(30),
     facturePaiement VARCHAR(30) REFERENCES gap.Factures (numeroFacture) ON DELETE CASCADE
 );
-
 CREATE TABLE gap.Comptes (
     idCompte SERIAL PRIMARY KEY,
-    numeroCompte  VARCHAR(20) UNIQUE DEFAULT get_numeroCompte(),
+    numeroCompte VARCHAR(20) UNIQUE DEFAULT get_numeroCompte(),
     montantCompte INT DEFAULT 0,
     dateCompte VARCHAR(20),
     heureCompte VARCHAR(10),
     patientCompte VARCHAR(20) REFERENCES gap.DossierAdministratif (ippPatient) ON DELETE CASCADE
 );
-
 CREATE TABLE gap.Transactions (
-    idTransaction  SERIAL PRIMARY KEY,
+    idTransaction SERIAL PRIMARY KEY,
     dateTransaction VARCHAR(20),
     heureTransaction VARCHAR(10),
     montantTransaction INT,
@@ -127,27 +119,26 @@ CREATE TABLE gap.Transactions (
     typeTransaction VARCHAR(20),
     compteTransaction VARCHAR(20) REFERENCES gap.Comptes (numeroCompte) ON DELETE CASCADE
 );
-
 CREATE TABLE gap.Controles (
     idControle SERIAL PRIMARY KEY,
     dateDebutControle VARCHAR(30),
     heureDebutControle VARCHAR(20),
     dateFinControle VARCHAR(30),
     heureFinControle VARCHAR(20),
-    typeControle VARCHAR(30)  DEFAULT 'Controle',   
+    typeControle VARCHAR(30) DEFAULT 'Controle',
     statutControle VARCHAR(30) DEFAULT 'attente(infirmier)',
     sejourControle VARCHAR(20) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE
 );
 
-CREATE TABLE gap.Bordereaux (
-    idBordereau SERIAL PRIMARY KEY,
-    numeroBordereau VARCHAR(20) UNIQUE DEFAULT get_numeroBordereau(),
-    dateCreationBordereau VARCHAR(30),
-    derniereModifBordereau VARCHAR(20),
-);
-
-CREATE TABLE gap.Factures_Bordereau (
-    idFacturesbordereau SERIAL PRIMARY KEY,
-    statutFacture VARCHAR(50),
-    numeroBordereau VARCHAR(20) REFERENCES gap.Bordereau(numeroBordereau) ON DELETE CASCADE
-);
+-- CREATE TABLE gap.Bordereaux (
+--     idBordereau SERIAL PRIMARY KEY,
+--     numeroBordereau VARCHAR(20) UNIQUE DEFAULT get_numeroBordereau(),
+--     dateCreationBordereau VARCHAR(30),
+--     heureCreationBorderau VARCHAR(20),
+--     derniereModifBordereau VARCHAR(20)
+-- );
+-- CREATE TABLE gap.Factures_Bordereau (
+--     idFacturesbordereau SERIAL PRIMARY KEY,
+--     numeroFacture VARCHAR(50) REFERENCES gap.Factures(numeroFacture) ON DELETE CASCADE,
+--     numeroBordereau VARCHAR(20) REFERENCES gap.Bordereaux(numeroBordereau) ON DELETE CASCADE
+-- );

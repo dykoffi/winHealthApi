@@ -14,6 +14,7 @@ const {
     add_compte,
     add_transaction,
     add_assurance,
+    add_bordereau,
     //autres
     encaisser_patient_facture,
     encaisser_assurance_facture
@@ -33,18 +34,28 @@ const {
     list_patient_no_compte,
     list_assurances,
     list_controles,
-    list_factures_by_assurances,
+    //bordereau
+    list_factures_for_all_assurance_garant_typesejour,
+    list_factures_for_all_assurance_garant,
+    list_factures_for_all_assurance_typesejour,
+    list_factures_for_all_assurance,
+    list_factures_for_all_garant_typesejour,
+    list_factures_for_all_garant,
+    list_factures_for_all_typesejour,
+    list_factures_by_assurance_garant_typesejour,
     //details
     details_patient,
     details_sejour,
     details_facture,
     details_compte,
     details_assurance,
+    details_bordereau,
     //autres
     imprimer_facture,
     annuler_facture,
     verify_facture,
-    verify_compte
+    verify_compte,
+    list_bordereaux
 } = require("../apps/gap/api/list");
 const {
     search_patient,
@@ -59,7 +70,10 @@ const {
     update_patient_facture,
     update_assurance_facture,
     update_compte,
-    update_assurance
+    retrait_facture_recue,
+    retrait_facture_valide,
+    update_assurance,
+    update_sejour_assurance
 } = require("../apps/gap/api/update")
 const {
     delete_patient,
@@ -709,20 +723,101 @@ router
     })
 
 
-//borderaus
+//bordereaux
 router
-    // .get('/list/borderaux/:assurances', (req, res) => {
-    //     client.query(search_assurance, [req.params.info], (err, result) => {
-    //         if (err) console.log(err)
-    //         else {
-    //             res.header(headers);
-    //             res.status(status);
-    //             res.json({ message: { type: "info", label: "" }, ...result });
-    //         }
-    //     });
-    // })
-    .get('/list/factures/:assurance/:dateDebut/:dateFin/:typesejour', (req, res) => {
-        client.query(list_factures_by_assurances, [req.params.assurance, req.params.dateDebut, req.params.dateFin, req.params.typesejour], (err, result) => {
+    .get('/list/factures/:assurance/:garant/:dateDebut/:dateFin/:typesejour', (req, res) => {
+        const { assurance, garant, dateDebut, dateFin, typesejour } = req.params
+        if (assurance === "Tous" && garant === "Tous" && typesejour === "Tous") {
+            client.query(list_factures_for_all_assurance_garant_typesejour, [dateDebut, dateFin,], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance === "Tous" && garant === "Tous" && typesejour !== "Tous") {
+            client.query(list_factures_for_all_assurance_garant, [dateDebut, dateFin, typesejour], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance === "Tous" && garant !== "Tous" && typesejour === "Tous") {
+            client.query(list_factures_for_all_assurance_typesejour, [dateDebut, dateFin, garant], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance === "Tous" && garant !== "Tous" && typesejour !== "Tous") {
+            client.query(list_factures_for_all_assurance, [dateDebut, dateFin, garant, typesejour], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance !== "Tous" && garant === "Tous" && typesejour === "Tous") {
+            client.query(list_factures_for_all_garant_typesejour, [dateDebut, dateFin, assurance], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance !== "Tous" && garant === "Tous" && typesejour !== "Tous") {
+            client.query(list_factures_for_all_garant, [dateDebut, dateFin, assurance, typesejour], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance !== "Tous" && garant !== "Tous" && typesejour === "Tous") {
+            client.query(list_factures_for_all_typesejour, [dateDebut, dateFin, assurance, garant], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance !== "Tous" && garant !== "Tous" && typesejour !== "Tous") {
+            client.query(list_factures_by_assurance_garant_typesejour, [dateDebut, dateFin, assurance, garant, typesejour], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+    })
+    .get('/retrait/facture_recue/:numeroFacture', (req, res) => {
+        client.query(retrait_facture_recue, [req.params.numeroFacture], (err, result) => {
             if (err) console.log(err)
             else {
                 res.header(headers);
@@ -731,7 +826,100 @@ router
             }
         });
     })
+    .get('/retrait/facture_valide/:numeroFacture', (req, res) => {
+        client.query(retrait_facture_valide, [req.params.numeroFacture], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
+    })
+    .post('/add/factures_recues', (req, res) => {
+        let body = []
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        client.query(format('UPDATE gap.Factures SET statutFactures=%L WHERE numeroFacture IN (%L)', 'recu', body), (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
 
+    })
+    .post('/add/factures_valides', (req, res) => {
+        let body = []
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        client.query(format('UPDATE gap.Factures SET statutFactures=%L WHERE numeroFacture IN (%L)', 'valide', body), (err, result) => {
+            if (err) { console.log(err); } else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
+
+    })
+    .post('/update/sejour/:numeroSejour', (req, res) => {
+        let body = []
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const { gestionnaire, organisme, beneficiaire, matriculeAssure, assurePrinc, numeroPEC, taux } = body
+        client.query(update_sejour_assurance, [gestionnaire, organisme, beneficiaire, matriculeAssure, assurePrinc, numeroPEC, taux, req.params.numeroSejour], (err, result) => {
+            if (err) console.log(err);
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+
+        })
+
+    })
+    .get('/list/bordereaux', (req, res) => {
+        client.query(list_bordereaux, (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
+    })
+    .get('/details/bordereau/:numeroBordereau', (req, res) => {
+        console.log(req.params.numeroBordereau);
+        
+        client.query(details_bordereau, [req.params.numeroBordereau], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
+    })
+    .post('/add/bordereau', (req, res) => {
+        let body = []
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const { nomassurance, nomgarant, typeSejour, limiteDateString, factures } = body
+        client.query(add_bordereau, [moment().format("DD-MM-YYYY"), moment().format("HH:MM"), limiteDateString, nomassurance, nomgarant, typeSejour, "Création"],
+            (err, result) => {
+                listFactures = factures.map(facture => [result.rows[0].numerobordereau, facture])
+                if (err) console.log(err);
+                else {
+                    client.query(format("INSERT INTO gap.Bordereau_factures(numeroBordereau, numeroFacture) VALUES %L", listFactures), (err, result) => {
+                        if (err) console.log(err);
+                        else {
+                            res.header(headers);
+                            res.status(status);
+                            res.json({ message: { type: "info", label: "" }, ...result });
+                        }
+                    })
+                }
+
+            })
+    })
 //Actes
 router
     .get('/list/actes', (req, res) => {
@@ -767,6 +955,17 @@ router
                 }
             });
         }
+    })
+
+
+router
+    .get('/*', (req, res) => {
+        console.log('NOT FOUND : ' + req.url);
+
+    })
+    .post('/*', (req, res) => {
+        console.log('NOT FOUND : ' + req.url);
+
     })
 
 module.exports = router

@@ -57,3 +57,27 @@ exports.update_patient = {
     contactPersonnesurePatient =$24,
     qualitePersonnesurePatient =$25 WHERE ipppatient=$26 RETURNING idDossier`
 }
+
+exports.retrait_facture_recue = {
+    name: "retrait_facture_recue",
+    text: `UPDATE gap.Factures SET statutFactures='attente' WHERE numeroFacture=$1`
+}
+
+exports.retrait_facture_valide = {
+    name: "retrait_facture_valide",
+    text: `UPDATE gap.Factures SET statutFactures='recu' WHERE numeroFacture=$1`
+}
+
+exports.update_sejour_assurance = {
+    name: 'update_sejour_assurance',
+    text: `
+        UPDATE gap.Sejours SET 
+            gestionnaire=$1,
+            organisme=$2,
+            beneficiaire=$3,
+            matriculeAssure=$4,
+            assurePrinc=$5,
+            numeroPEC=$6,
+            taux=$7 WHERE numeroSejour=$8
+    `
+}
