@@ -1,16 +1,6 @@
-DROP TABLE Users;
-
-DROP TABLE Droits;
-
-DROP TABLE Profils;
-
-DROP TABLE Droit_Profil;
-
-DROP TABLE Logs;
-
-DROP TABLE Apps;
-
-CREATE TABLE Users (
+DROP SCHEMA admin CASCADE;
+CREATE SCHEMA admin;
+CREATE TABLE admin.Users (
     idUser SERIAL PRIMARY KEY,
     nomUser VARCHAR(20),
     prenomsUser VARCHAR(50),
@@ -22,22 +12,24 @@ CREATE TABLE Users (
     loginUser VARCHAR(100),
     passUser VARCHAR(255)
 );
-
-CREATE TABLE Apps (
+CREATE TABLE admin.Login (
+    idLogin SERIAL PRIMARY KEY,
+    loginUser VARCHAR(255),
+    passUser VARCHAR(255)
+);
+CREATE TABLE admin.Apps (
     idApp SERIAL PRIMARY KEY,
     codeApp VARCHAR(20),
     nomApp VARCHAR(50),
     descApp VARCHAR(50)
 );
-
-CREATE TABLE Droits(
+CREATE TABLE admin.Droits(
     idDroit SERIAL PRIMARY KEY,
     codeDroit VARCHAR(10),
     codeApp VARCHAR(15),
     labelDroit VARCHAR(100)
 );
-
-CREATE TABLE Profils (
+CREATE TABLE admin.Profils (
     idProfil SERIAL PRIMARY KEY,
     labelProfil VARCHAR(100),
     auteurProfil VARCHAR(30),
@@ -45,14 +37,12 @@ CREATE TABLE Profils (
     codeApp VARCHAR(15),
     UNIQUE (labelProfil)
 );
-
-CREATE TABLE Droit_Profil (
+CREATE TABLE admin.Droit_Profil (
     idDroitProfil SERIAL PRIMARY KEY,
     idProfil INT NOT NULL,
     codeDroit VARCHAR(10)
 );
-
-CREATE TABLE Logs (
+CREATE TABLE admin.Logs (
     idLogs SERIAL PRIMARY KEY,
     typeLog VARCHAR (200),
     auteurLog VARCHAR(50),

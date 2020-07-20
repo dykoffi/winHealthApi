@@ -129,16 +129,24 @@ CREATE TABLE gap.Controles (
     statutControle VARCHAR(30) DEFAULT 'attente(infirmier)',
     sejourControle VARCHAR(20) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE
 );
-
--- CREATE TABLE gap.Bordereaux (
---     idBordereau SERIAL PRIMARY KEY,
---     numeroBordereau VARCHAR(20) UNIQUE DEFAULT get_numeroBordereau(),
---     dateCreationBordereau VARCHAR(30),
---     heureCreationBorderau VARCHAR(20),
---     derniereModifBordereau VARCHAR(20)
--- );
--- CREATE TABLE gap.Factures_Bordereau (
---     idFacturesbordereau SERIAL PRIMARY KEY,
---     numeroFacture VARCHAR(50) REFERENCES gap.Factures(numeroFacture) ON DELETE CASCADE,
---     numeroBordereau VARCHAR(20) REFERENCES gap.Bordereaux(numeroBordereau) ON DELETE CASCADE
--- );
+CREATE TABLE gap.Bordereaux (
+    idBordereau SERIAL PRIMARY KEY,
+    numeroBordereau VARCHAR(30) UNIQUE DEFAULT get_numeroBordereau(),
+    dateCreationBordereau VARCHAR(30),
+    heureCreationBordereau VARCHAR(30),
+    dateLimiteBordereau VARCHAR(30),
+    gestionnaireBordereau VARCHAR(100),
+    organismeBordereau VARCHAR(100),
+    typeSejourBordereau VARCHAR(100),
+    montantTotal INT,
+    partAssurance INT,
+    partPatient INT,
+    statutBordereau VARCHAR(100)
+);
+CREATE TABLE gap.Bordereau_factures (
+    idBordereau_facture SERIAL PRIMARY KEY,
+    numeroFacture VARCHAR(100) REFERENCES gap.Factures (numerofacture),
+    numeroBordereau VARCHAR(100) REFERENCES gap.Bordereaux (numeroBordereau),
+    statutFacture VARCHAR(10),
+    commentaireFacture VARCHAR(200)
+);

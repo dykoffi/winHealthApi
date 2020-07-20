@@ -1,10 +1,10 @@
 //TODO : FACTURES
 exports.update_patient_facture = {
-    name: "update_facture",
+    name: "update_patient_facture",
     text: `UPDATE gap.Factures SET restePatientFacture=get_reste_patient((SELECT sejourFacture FROM gap.Factures WHERE numeroFacture=$1),$1) WHERE numeroFacture=$1`
 }
 exports.update_assurance_facture = {
-    name: "update_facture",
+    name: "update_assurance_facture",
     text: `UPDATE gap.Factures SET resteAssuranceFacture=get_reste_assurance((SELECT sejourFacture FROM gap.Factures WHERE numeroFacture=$1),$1) WHERE numeroFacture=$1`
 }
 
@@ -80,4 +80,23 @@ exports.update_sejour_assurance = {
             numeroPEC=$6,
             taux=$7 WHERE numeroSejour=$8
     `
+}
+
+exports.update_facture = {
+    name: "update_facture",
+    text: `UPDATE gap.Factures SET
+        partAssuranceFacture=get_part_assurance($1),
+        resteAssuranceFacture=get_part_assurance($1),
+        partPatientFacture=get_part_patient($1),
+        restePatientFacture=get_part_patient($1)
+        WHERE sejourFacture=$1
+    `
+}
+
+exports.update_statut_bordereau = {
+    name: 'update_statut_bordereau',
+    text: `
+        UPDATE gap.Bordereaux SET
+            statutBordereau=$1 WHERE numeroBordereau=$2
+        `
 }

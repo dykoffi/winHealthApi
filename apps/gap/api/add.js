@@ -118,6 +118,9 @@ exports.add_bordereau = {
         gestionnaireBordereau,
         organismeBordereau,
         typeSejourBordereau,
+        montantTotal,
+        partAssurance,
+        partPatient,
         statutBordereau
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING numeroBordereau`
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING numeroBordereau`
 }

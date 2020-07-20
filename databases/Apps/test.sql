@@ -1,5 +1,4 @@
-DROP TABLE gap.Bordereau_factures;
-DROP TABLE gap.Bordereaux;
+DROP TABLE gap.Bordereaux CASCADE;
 CREATE TABLE gap.Bordereaux (
     idBordereau SERIAL PRIMARY KEY,
     numeroBordereau VARCHAR(30) UNIQUE DEFAULT get_numeroBordereau(),
@@ -9,10 +8,8 @@ CREATE TABLE gap.Bordereaux (
     gestionnaireBordereau VARCHAR(100),
     organismeBordereau VARCHAR(100),
     typeSejourBordereau VARCHAR(100),
+    montantTotal INT,
+    partAssurance INT,
+    partPatient INT,
     statutBordereau VARCHAR(100)
-);
-CREATE TABLE gap.Bordereau_factures (
-    idBordereau_facture SERIAL PRIMARY KEY,
-    numeroFacture VARCHAR(100) REFERENCES gap.Factures (numerofacture),
-    numeroBordereau VARCHAR(100) REFERENCES gap.Bordereaux (numeroBordereau)
 );

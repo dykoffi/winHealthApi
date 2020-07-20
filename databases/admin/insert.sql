@@ -43,7 +43,6 @@ INSERT INTO Profils(labelProfil, auteurProfil,dateProfil, codeApp) VALUES
 ('ALTEA ADMIN','koffiedy@gmail.com','23 avril 2020','COAP004'),
 ('ALTEA DPI','koffiedy@gmail.com','23 avril 2020','COAP002');
 
-
 INSERT INTO Users(nomUser, prenomsUser,contactUser,mailUser, posteUser, profilUser, codeapp,loginUser, passUser) VALUES 
 ('ALTEA','CI','51 88 64 78','winhealth@altea-ci.com', 'Agent ALTEA', 1,'COAP004','admin',md5('admin')),
 ('Edy','Koffi','51 88 64 78','winhealth@altea-ci.com', 'Agent ALTEA DPI', 2,'COAP002','dpi',md5('admin')),

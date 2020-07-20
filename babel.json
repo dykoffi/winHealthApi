@@ -1,0 +1,23 @@
+{
+  "stories": [
+    {
+      "title": "babeltest",
+      "created": 1594981425216,
+      "submissionHistory": {},
+      "versions": [
+        "1f449416-fc9e-4355-b776-09aaae71c0a2"
+      ],
+      "id": "6ef88907-db39-437e-bb77-2e7233cd09df"
+    }
+  ],
+  "versions": [
+    {
+      "storyId": "6ef88907-db39-437e-bb77-2e7233cd09df",
+      "name": "draft",
+      "wordCount": 0,
+      "created": 1594981425223,
+      "statistics": {},
+      "id": "1f449416-fc9e-4355-b776-09aaae71c0a2"
+    }
+  ]
+}

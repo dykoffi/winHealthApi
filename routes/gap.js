@@ -3,7 +3,6 @@ const format = require('pg-format')
 const client = require("../constants/connection");
 const moment = require('moment')
 const { headers, status } = require('../constants/query')
-const { test1, test2 } = require('../apps/gap/api/test')
 const {
     //ajouter
     add_patient,
@@ -27,6 +26,7 @@ const {
     list_actes,
     list_actesSejour,
     list_all_factures,
+    list_factures_assurances,
     list_factures_attentes,
     list_factures_patient,
     list_factures_payees_patient,
@@ -62,7 +62,16 @@ const {
     search_sejour,
     search_facture,
     search_compte,
-    search_assurance
+    search_assurance,
+    //bordereaux
+    search_bordereaux_for_all_assurance_garant_typesejour,
+    search_bordereaux_for_all_assurance_garant,
+    search_bordereaux_for_all_assurance_typesejour,
+    search_bordereaux_for_all_assurance,
+    search_bordereaux_for_all_garant_typesejour,
+    search_bordereaux_for_all_garant,
+    search_bordereaux_for_all_typesejour,
+    search_bordereaux_by_assurance_garant_typesejour,
 } = require("../apps/gap/api/search")
 const {
     update_patient,
@@ -73,7 +82,9 @@ const {
     retrait_facture_recue,
     retrait_facture_valide,
     update_assurance,
-    update_sejour_assurance
+    update_sejour_assurance,
+    update_statut_bordereau,
+    update_facture
 } = require("../apps/gap/api/update")
 const {
     delete_patient,
@@ -251,6 +262,8 @@ router
 router
     .post('/add/sejour/:patient', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        console.log(body);
+
         const {
             type,
             actes,
@@ -381,6 +394,16 @@ router
             }
         });
     })
+    .get('/search/compte/:info', (req, res) => {
+        client.query(search_compte, [req.params.info], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers)
+                res.status(status)
+                res.json({ message: { type: "info", label: "Liste des comptes actualisée" }, ...result })
+            }
+        })
+    })
     .post("/add/compte", (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const {
@@ -484,14 +507,6 @@ router
             res.header(headers);
             res.status(status);
             res.json({ message: { type: "info", label: " " }, ...result });
-
-
-
-
-
-
-
-
         });
     })
     .post('/encaisser_patient/facture/:numeroFacture', (req, res) => {
@@ -725,6 +740,14 @@ router
 
 //bordereaux
 router
+    .get('/list/factures_assurances', (req, res) => {
+        client.query(list_factures_assurances, (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: " " }, ...result });
+        });
+    })
     .get('/list/factures/:assurance/:garant/:dateDebut/:dateFin/:typesejour', (req, res) => {
         const { assurance, garant, dateDebut, dateFin, typesejour } = req.params
         if (assurance === "Tous" && garant === "Tous" && typesejour === "Tous") {
@@ -816,6 +839,97 @@ router
         }
 
     })
+    .get('/list/bordereaux/:assurance/:garant/:dateDebut/:dateFin/:typesejour', (req, res) => {
+        const { assurance, garant, dateDebut, dateFin, typesejour } = req.params
+        if (assurance === "Tous" && garant === "Tous" && typesejour === "Tous") {
+            client.query(search_bordereaux_for_all_assurance_garant_typesejour, [dateDebut, dateFin,], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance === "Tous" && garant === "Tous" && typesejour !== "Tous") {
+            client.query(search_bordereaux_for_all_assurance_garant, [dateDebut, dateFin, typesejour], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance === "Tous" && garant !== "Tous" && typesejour === "Tous") {
+            client.query(search_bordereaux_for_all_assurance_typesejour, [dateDebut, dateFin, garant], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance === "Tous" && garant !== "Tous" && typesejour !== "Tous") {
+            client.query(search_bordereaux_for_all_assurance, [dateDebut, dateFin, garant, typesejour], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance !== "Tous" && garant === "Tous" && typesejour === "Tous") {
+            client.query(search_bordereaux_for_all_garant_typesejour, [dateDebut, dateFin, assurance], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance !== "Tous" && garant === "Tous" && typesejour !== "Tous") {
+            client.query(search_bordereaux_for_all_garant, [dateDebut, dateFin, assurance, typesejour], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance !== "Tous" && garant !== "Tous" && typesejour === "Tous") {
+            client.query(search_bordereaux_for_all_typesejour, [dateDebut, dateFin, assurance, garant], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+        if (assurance !== "Tous" && garant !== "Tous" && typesejour !== "Tous") {
+            client.query(search_bordereaux_by_assurance_garant_typesejour, [dateDebut, dateFin, assurance, garant, typesejour], (err, result) => {
+                if (err) console.log(err)
+                else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            });
+        }
+
+    })
     .get('/retrait/facture_recue/:numeroFacture', (req, res) => {
         client.query(retrait_facture_recue, [req.params.numeroFacture], (err, result) => {
             if (err) console.log(err)
@@ -828,6 +942,31 @@ router
     })
     .get('/retrait/facture_valide/:numeroFacture', (req, res) => {
         client.query(retrait_facture_valide, [req.params.numeroFacture], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
+    })
+    .get('/list/bordereaux', (req, res) => {
+        client.query(list_bordereaux, (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        });
+    })
+    .get('/list/bordereaux/:typeBordereau', (req, res) => {
+        client.query(ok, [req.params.typebordereau], (err, result) => {
+
+        })
+    })
+    .get('/details/bordereau/:numeroBordereau', (req, res) => {
+        client.query(details_bordereau, [req.params.numeroBordereau], (err, result) => {
             if (err) console.log(err)
             else {
                 res.header(headers);
@@ -869,41 +1008,24 @@ router
         client.query(update_sejour_assurance, [gestionnaire, organisme, beneficiaire, matriculeAssure, assurePrinc, numeroPEC, taux, req.params.numeroSejour], (err, result) => {
             if (err) console.log(err);
             else {
-                res.header(headers);
-                res.status(status);
-                res.json({ message: { type: "info", label: "" }, ...result });
+                client.query(update_facture, [req.params.numeroSejour], (err, result) => {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                })
             }
 
         })
 
     })
-    .get('/list/bordereaux', (req, res) => {
-        client.query(list_bordereaux, (err, result) => {
-            if (err) console.log(err)
-            else {
-                res.header(headers);
-                res.status(status);
-                res.json({ message: { type: "info", label: "" }, ...result });
-            }
-        });
-    })
-    .get('/details/bordereau/:numeroBordereau', (req, res) => {
-        console.log(req.params.numeroBordereau);
-        
-        client.query(details_bordereau, [req.params.numeroBordereau], (err, result) => {
-            if (err) console.log(err)
-            else {
-                res.header(headers);
-                res.status(status);
-                res.json({ message: { type: "info", label: "" }, ...result });
-            }
-        });
-    })
     .post('/add/bordereau', (req, res) => {
         let body = []
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        const { nomassurance, nomgarant, typeSejour, limiteDateString, factures } = body
-        client.query(add_bordereau, [moment().format("DD-MM-YYYY"), moment().format("HH:MM"), limiteDateString, nomassurance, nomgarant, typeSejour, "Création"],
+        console.log(body);
+        const { nomassurance, nomgarant, typeSejour, limiteDateString, montanttotal, partAssurance, partPatient, factures } = body
+
+        client.query(add_bordereau, [moment().format("DD-MM-YYYY"), moment().format("HH:MM"),
+            limiteDateString, nomassurance, nomgarant, typeSejour, montanttotal, partAssurance, partPatient, "Création"],
             (err, result) => {
                 listFactures = factures.map(facture => [result.rows[0].numerobordereau, facture])
                 if (err) console.log(err);
@@ -911,14 +1033,34 @@ router
                     client.query(format("INSERT INTO gap.Bordereau_factures(numeroBordereau, numeroFacture) VALUES %L", listFactures), (err, result) => {
                         if (err) console.log(err);
                         else {
-                            res.header(headers);
-                            res.status(status);
-                            res.json({ message: { type: "info", label: "" }, ...result });
+                            client.query(format('UPDATE gap.Factures SET statutFactures=%L WHERE numeroFacture IN (%L)', 'bordereau', factures), (err, result) => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    res.header(headers);
+                                    res.status(status);
+                                    res.json({ message: { type: "info", label: "" }, ...result });
+                                }
+                            });
                         }
                     })
                 }
 
             })
+    })
+    .post('/update/statut_bordereau/:numeroBordereau', (req, res) => {
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const { statut } = body
+        console.log(body);
+
+        client.query(update_statut_bordereau, [statut, req.params.numeroBordereau], (err, result) => {
+            if (err) console.log(err)
+            else {
+                res.header(headers);
+                res.status(status);
+                res.json({ message: { type: "info", label: "" }, ...result });
+            }
+        })
     })
 //Actes
 router
@@ -961,11 +1103,11 @@ router
 router
     .get('/*', (req, res) => {
         console.log('NOT FOUND : ' + req.url);
-
+        res.json({ message: "route not foound" })
     })
     .post('/*', (req, res) => {
         console.log('NOT FOUND : ' + req.url);
-
+        res.json({ message: "route not foound" })
     })
 
 module.exports = router

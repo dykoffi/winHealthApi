@@ -111,10 +111,11 @@ exports.verify_compte = {
 
 exports.details_facture = {
     name: "details_facture",
-    text: `SELECT * FROM 
-    gap.Factures, 
-    gap.Sejours,
-    gap.DossierAdministratif LEFT OUTER JOIN  gap.Comptes ON ipppatient=patientcompte
+    text: `
+    SELECT * FROM 
+        gap.Factures, 
+        gap.Sejours,
+        gap.DossierAdministratif LEFT OUTER JOIN  gap.Comptes ON ipppatient=patientcompte
     WHERE
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
@@ -124,12 +125,13 @@ exports.details_facture = {
 
 exports.imprimer_facture = {
     name: "imprimer_facture",
-    text: `SELECT * FROM 
-    gap.Factures, 
-    general.Actes, 
-    gap.Sejours,
-    general.Etablissement,
-    gap.DossierAdministratif
+    text: `
+    SELECT * FROM 
+        gap.Factures, 
+        general.Actes, 
+        gap.Sejours,
+        general.Etablissement,
+        gap.DossierAdministratif
     WHERE 
         sejourFacture=numeroSejour AND
         etablissementSejour=idEtablissement AND
@@ -144,12 +146,13 @@ exports.annuler_facture = {
 }
 exports.verify_facture = {
     name: "verify_facture",
-    text: `SELECT * FROM 
-    gap.Factures, 
-    general.Actes, 
-    gap.Sejours, 
-    general.Etablissement,
-    gap.DossierAdministratif
+    text: `
+    SELECT * FROM 
+        gap.Factures, 
+        general.Actes, 
+        gap.Sejours, 
+        general.Etablissement,
+        gap.DossierAdministratif
     WHERE 
         acteFacture=codeActe AND
         factureSejour=idFacture AND
@@ -168,45 +171,77 @@ exports.list_controles = {
 //TODO : COMPTES 
 exports.list_patient_no_compte = {
     name: "list_patient_no_compte",
-    text: `SELECT * FROM 
-            gap.DossierAdministratif LEFT OUTER JOIN gap.Comptes
-            ON Comptes.patientCompte=DossierAdministratif.ipppatient
-            WHERE patientCompte ISNULL`
+    text: `
+    SELECT * FROM 
+        gap.DossierAdministratif LEFT OUTER JOIN gap.Comptes
+        ON Comptes.patientCompte=DossierAdministratif.ipppatient
+        WHERE patientCompte ISNULL`
 }
 exports.list_comptes = {
     name: 'list_comptes',
-    text: `SELECT * FROM gap.Comptes, gap.DossierAdministratif
-        WHERE Comptes.patientCompte=DossierAdministratif.ippPatient ORDER BY idCompte`
+    text: `
+    SELECT * FROM 
+        gap.Comptes, gap.DossierAdministratif
+    WHERE 
+        Comptes.patientCompte=DossierAdministratif.ippPatient 
+    ORDER BY idCompte`
 }
 exports.details_compte = {
     name: 'details_comptes',
-    text: `SELECT * FROM gap.Comptes, gap.DossierAdministratif
-        WHERE Comptes.patientCompte=DossierAdministratif.ippPatient AND Comptes.numeroCompte=$1`
+    text: `
+    SELECT * FROM 
+        gap.Comptes, gap.DossierAdministratif
+    WHERE 
+        Comptes.patientCompte=DossierAdministratif.ippPatient AND 
+        Comptes.numeroCompte=$1`
 }
 
 //TODO : BORDERAUX
+exports.list_factures_assurances = {
+    name: "list_factures_assurances",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    gap.Sejours,
+    gap.DossierAdministratif
+    WHERE 
+        patientSejour=idDossier AND
+        sejourFacture=numeroSejour AND
+        gestionnaire <> ''
+        ORDER BY idFacture`
+}
 //1
 exports.list_factures_for_all_assurance_garant_typesejour = {
     name: "list_factures_for_all_assurance_garant_typesejour",
-    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
-            WHERE
-                Factures.sejourFacture = Sejours.numeroSejour AND
-                Sejours.gestionnaire = Assurances.nomAssurance AND
-                DossierAdministratif.idDossier = Sejours.patientSejour AND
-                Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date 
+    text: `
+    SELECT * FROM 
+        gap.Factures, 
+        gap.Sejours, 
+        gap.Assurances, 
+        gap.DossierAdministratif
+    WHERE
+        Factures.sejourFacture = Sejours.numeroSejour AND
+        Sejours.gestionnaire = Assurances.nomAssurance AND
+        DossierAdministratif.idDossier = Sejours.patientSejour AND
+        Factures.dateFacture::date >= $1::date AND 
+        Factures.dateFacture::date <= $2::date 
         `
 }
 
 //2
 exports.list_factures_for_all_assurance_garant = {
     name: "list_factures_for_all_assurance_garant",
-    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
-            WHERE
-                Factures.sejourFacture = Sejours.numeroSejour AND
-                Sejours.gestionnaire = Assurances.nomAssurance AND
-                DossierAdministratif.idDossier = Sejours.patientSejour AND
-                Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
-                Sejours.typesejour = $3
+    text: `
+    SELECT * FROM 
+        gap.Factures, 
+        gap.Sejours, 
+        gap.Assurances, 
+        gap.DossierAdministratif
+    WHERE
+        Factures.sejourFacture = Sejours.numeroSejour AND
+        Sejours.gestionnaire = Assurances.nomAssurance AND
+        DossierAdministratif.idDossier = Sejours.patientSejour AND
+        Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
+        Sejours.typesejour = $3
         `
 }
 //3
@@ -297,12 +332,42 @@ exports.list_factures_by_assurance_garant_typesejour = {
 // 
 exports.list_bordereaux = {
     name: 'list_bordereaux',
-    text: `SELECT * FROM gap.Bordereaux`
+    text: `
+        SELECT B.numeroBordereau,
+        datecreationbordereau,
+        datelimitebordereau,
+        typesejourbordereau,
+        statutbordereau,
+        gestionnairebordereau,
+        organismebordereau,
+        montanttotal,
+        partassurance,
+        partpatient,
+        COUNT(*) nbFacture
+    FROM gap.Bordereaux B
+        INNER JOIN gap.Bordereau_factures BF ON B.numeroBordereau = BF.numeroBordereau
+    GROUP BY B.numeroBordereau,
+        datecreationbordereau,
+        datelimitebordereau,
+        typesejourbordereau,
+        statutbordereau,
+        gestionnairebordereau,
+        organismebordereau,
+        montanttotal,
+        partassurance,
+        partpatient
+        ORDER BY B.numeroBordereau
+    `
+}
+
+exports.list_bordereaux_by_type = {
+    name: "list_bordereaux_by_type",
+    text: `SELECT * FROM gap.Bordereaux WHERE statutBordereau=$1 ORDER BY numeroBordereau`
 }
 
 exports.details_bordereau = {
-    name:'details_bordereau',
-    text : `SELECT * FROM gap.Bordereaux B
+    name: 'details_bordereau',
+    text: `SELECT * FROM gap.Bordereaux B
         INNER JOIN gap.Bordereau_factures BF ON B.numeroBordereau=BF.numeroBordereau 
         INNER JOIN gap.Factures F ON BF.numeroFacture=F.numeroFacture 
         INNER JOIN gap.Sejours S ON S.numeroSejour=F.sejourFacture 
