@@ -1,0 +1,82 @@
+MAGC001,consultation,Consultation par le médecin généraliste,1,C,
+MAGC002,consultation,Consultation par le médecin spécialiste,1,CS,
+DAGC003,consultation,Consultation au cabinet du médecin dentiste,1,CD,
+DAGC004,consultation,Consultation au cabinet du médecin dentiste spécialiste,1,CDS,
+MAGC005,consultation,Consultation au cabinet du médecin psychiatre ou neurologue,1,CNPSY,
+TAGC006,consultation,Consultation de la sage-femme,1,CSF,
+MAGV001,visite,Visite à domicile du médecin généraliste,1,V,
+MAGV002,visite,Visite à domicile du médecin dentiste,1,VD,
+MAGV003,visite,Visite à domicile du médecin spécialiste,1,VS,
+MAGV004,visite,Visite à domicile de médecin psychiatre,1,VNPSY,
+TAGV005,visite,Visite à domicile de la sage-femme,1,VSF,
+ZAGV006,visite,"Visite à domicile de nuit (de 21 h à 7h) du médecin généraliste, médecin spécialiste, chirurgien-dentiste et sage-femme",1,VN,
+ZAGV007,visite,"Visite à domicile dimanche et jours fériés du médecin généraliste, médecin spécialiste, chirurgien-dentiste et sage-femme",1,VF,
+TEDY001,prélèvements et injection,Prélèvement par ponction venieuse directe,1.5,AMI,ATM
+TETY001,prélèvements et injection,saignée,5,AMI,ATM
+TEDY002,prélèvements et injection,"Prélèvement aseptique cutané ou de sécrétions muqueuses, prélèvement de selles ou d'urine pour examens cytologiques, bactériologiques, mycologique, virologiques ou parasitologues",1,AMI,ATM
+TETY002,prélèvements et injection,Injection intraveineuse directe isolée,2,AMI,ATM
+TETY003,prélèvements et injection,Injection intraveineuse directe en série,2.5,AMI,ATM
+TETY004,prélèvements et injection,Injection intraveineuse directe chez un enfant de moins de cinq ans,2,AMI,ATM
+TETY005,prélèvements et injection,Injection intramusculaire,1,AMI,ATM
+TZTY001,prélèvements et injection,Supplément pour vaccination antigrippale hors-primo injection dans le cadre de la campagne de vaccination anti-grippale organisée par l’assurance maladie,1,AMI,ATM
+TZTY002,prélèvements et injection,"Injection d'un sérum d'origine humaine ou animale selon la méthode de Besredka, y compris la surveillance",5,AMI,ATM
+TZTY003,prélèvements et injection,Injection sous-cutanée,1,AMI,ATM
+TZTY004,prélèvements et injection,Supplément pour vaccination antigrippale hors-primo injection dans le cadre de la campagne de vaccination anti-grippale organisée par l’assurance maladie,1,AMI,ATM
+TZTY005,prélèvements et injection,Injection intradermique,1,AMI,ATM
+TZTY006,prélèvements et injection,"Injection d'un ou plusieurs allergènes, poursuivant un traitement d'hyposensibilisation spécifique, selon le protocole écrit, y compris la surveillance, la tenue du dossier de soins, la transmission des informations au médecin prescripteur",3,AMI,ATM
+TZTY007,prélèvements et injection,Injection d'un implant sous cutané,2.5,AMI,ATM
+TZTY008,prélèvements et injection,Injection en goutte à goutte par voie rectale,2,AMI,ATM
+THTY001,pansements courants,Pansement de stomie,2,AMI,ATM
+TGTY001,pansements courants,"Pansement de trachéotomie, y compris l'aspiration et l'éventuel changement de canule ou sonde",2.5,AMI,ATM
+TZTY009,pansements courants,"Ablation de fils ou d'agrafes, dix ou moins, y compris le pansement éventuel",2,AMI,ATM
+TZTY010,pansements courants,"Ablation de fils ou d'agrafes, plus de dix, y compris le pansement éventuel",4,AMI,ATM
+TZTY011,pansements courants,Autre pansement,2,AMI,ATM
+TZTY012,pansements lourds et complexes,Pansements lourds et complexes nécessitant des conditions d'asepsie rigoureuse,4,AMI,ATM
+TQTY001,pansements lourds et complexes,"Pansements de brûlure étendue ou de plaie chimique ou thermique étendue, sur une surface supérieure à 5 % de la surface corporelle",4,AMI,ATM
+TQTY002,pansements lourds et complexes,"Pansement d'ulcère étendu ou de greffe cutanée, sur une surface supérieure à 60 cm²",4,AMI,ATM
+TPTY001,pansements lourds et complexes,"Pansement d'amputation nécessitant détersion, épluchage et régularisation",4,AMI,ATM
+THTY002,pansements lourds et complexes,Pansement de fistule digestive,4,AMI,ATM
+TPTY002,pansements lourds et complexes,"Pansement pour pertes de substance traumatique ou néoplasique, avec lésions profondes, sous aponévrotiques, musculaires, tendineuses ou osseuses",4,AMI,ATM
+TQTY003,pansements lourds et complexes,Pansement chirurgical nécessitant un méchage ou une irrigation,4,AMI,ATM
+TQTY004,pansements lourds et complexes,Pansement d'escarre profonde et étendue atteignant les muscles ou les tendons,4,AMI,ATM
+TPTY003,pansements lourds et complexes,Pansement chirurgical avec matériel d'ostéosynthèse extériorisé,4,AMI,ATM
+THTY003,pose de sonde et alimentation,Pose de sonde gastrique,3,AMI,ATM
+THTY004,pose de sonde et alimentation,"Alimentation entérale par gavage ou en déclive ou par nutri-pompe, y compris la surveillance, par séance",3,AMI,ATM
+THTY005,pose de sonde et alimentation,"Alimentation entérale par voie jéjunale avec sondage de la stomie, y compris le pansement et la surveillance, par séance",4,AMI,ATM
+TGTY002,soins portant sur l'appareil respiratoire,Séance d'aérosol,1.5,AMI,ATM
+TGTY003,soins portant sur l'appareil respiratoire,Lavage d'un sinus,2,AMI,ATM
+TJTY001,soins portant sur l'appareil génito-urinaire,Injection vaginale,1.5,AMI,ATM
+TJTY002,soins portant sur l'appareil génito-urinaire,Soins gynécologiques au décours immédiat d'un traitement par curiethérapie,1.5,AMI,ATM
+TJTY003,soins portant sur l'appareil génito-urinaire,Cathétérisme urétral chez la femme,3,AMI,ATM
+TJTY004,soins portant sur l'appareil génito-urinaire,Cathétérisme urétral chez l'homme,4,AMI,ATM
+TJTY005,soins portant sur l'appareil génito-urinaire,Changement de sonde urinaire à demeure chez la femme,3,AMI,ATM
+TJTY006,soins portant sur l'appareil génito-urinaire, Changement de sonde urinaire à demeure chez l'homme,4,AMI,ATM
+TJTY007,soins portant sur l'appareil génito-urinaire,"Éducation à l'autosondage comprenant le sondage éventuel, avec un maximum de dix séances",3.5,AMI,ATM
+TJTY008,soins portant sur l'appareil génito-urinaire, Réadaptation de vessie neurologique comprenant le sondage éventuel,4.5,AMI,ATM
+TJTY010,soins portant sur l'appareil génito-urinaire,Instillation et/ou lavage vésical (sonde en place),1.5,AMI,ATM
+TJTY011,soins portant sur l'appareil génito-urinaire,"Pose isolée d'un étui pénien, une fois par vingt-quatre heures",1,AMI,ATM
+THTY006,soins portant sur l'appareil digestif,Soins de bouche avec application de produits médicamenteux au décours immédiat d'une radiothérapie,1.5,AMI,ATM
+THTY007,soins portant sur l'appareil digestif,Lavement évacuateur ou médicamenteux,3,AMI,ATM
+THTY008,soins portant sur l'appareil digestif,Extraction de fécalome ou extraction manuelle des selles,3,AMI,ATM
+TQTY005,test et soins portant sur l'enveloppe cutané,Pulvérisation de produit(s) médicamenteux,1.5,AMI,ATM
+TQTY006,test et soins portant sur l'enveloppe cutané,Réalisation de test tuberculinique,0.5,AMI,ATM
+TQTY007,test et soins portant sur l'enveloppe cutané,Lecture d'un timbre tuberculinique et transmission d'informations au médecin prescripteur,1,AMI,ATM
+TYTY001,surveillance et observation d'un patient à domicile,"Administration et surveillance d'une thérapeutique orale au domicile (1) des patients présentant des troubles psychiatriques avec établissement d'une fiche de surveillance, par passage",1,AMI,ATM
+TYTY002,surveillance et observation d'un patient à domicile,"Au-delà du premier mois, par passage",1,AMI,ATM
+TYTY003,surveillance et observation d'un patient à domicile,"Surveillance et observation d'un patient lors de la mise en œuvre d'un traitement ou lors de la modification de celui-ci, sauf pour les patients diabétiques insulino-dépendants, avec établissement d'une fiche de surveillance, avec un maximum de quinze jours, par jour",1,AMI,ATM
+THTY009,soins d'entretien des catheters,cathéter péritonéal,4,AMI,ATM
+TETY006,soins d'entretien des catheters,cathéter extériorisé ou site implantable ou cathéter veineux central implanté par voie périphérique,4,AMI,ATM
+TETY007,injections et prélèvements d'analgésique(s),"Injection d'analgésique(s), à l'exclusion de la première par l'intermédiaire d'un cathéter intrathécal ou péridural",5,AMI,ATM
+TETY008,injections et prélèvements d'analgésique(s),"Injection intraveineuse par l'intermédiaire d'un site implanté, y compris l'héparinisation et le pansement",4,AMI,ATM
+TETY009,injections et prélèvements d'analgésique(s),"Injection intraveineuse par l'intermédiaire d'un cathéter central, y compris l'héparinisation et le pansement",3,AMI,ATM
+TEDY003,injections et prélèvements d'analgésique(s),Prélèvement sanguin sur cathéter veineux central extériorisé ou chambre implantable,1,AMI,ATM
+TETY010,perfusion,"Forfait pour séance de perfusion courte, d'une durée inférieure ou égale à une heure, sous surveillance continue",9,AMI,ATM
+TETY011,perfusion,"Supplément forfaitaire pour surveillance continue d'une perfusion au-delà de la première heure, par heure (avec un maximum de cinq heures)",6,AMI,ATM
+TETY012,perfusion,"Forfait pour séance de perfusion d'une durée supérieure à une heure, avec organisation d’une surveillance",14,AMI,ATM
+TETY013,perfusion,"Forfait pour arrêt et retrait du dispositif d'une perfusion, y compris le pansement, la tenue du dossier de soins éventuellement la transmission d’informations nécessaires au médecin prescripteur ; ce forfait ne se cumule pas avec un forfait de perfusion sous surveillance continue",5,AMI,ATM
+TETY014,perfusion,"Forfait pour l'organisation de la surveillance d'une perfusion, de la planification des soins, y compris la coordination avec les autres professionnels de santé, les prestataires et les services sociaux, à l'exclusion du jour de la pose et de celui du retrait, par jour (ne peuvent être notés, à l’occasion de cet acte , des frais de déplacements ou des majorations de nuit ou de dimanche)",4,AMI,ATM
+TETY015,perfusion,"Changement de flacon(s) ou branchement en Y sur dispositif en place ou intervention pour débranchement ou déplacement du dispositif ou contrôle du débit, pour une perfusion sans surveillance continue, en dehors de la séance de pose",4.1,AMI,ATM
+THTY010,soisn portant sur l'appareil digestif et urinaire,"Irrigation colique dans les suites immédiates d'une stomie définitive, incluant le pansement et la surveillance de l'évacuation, avec un maximum de vingt séances, par séance",4,AMI,ATM
+TJTY012,soisn portant sur l'appareil digestif et urinaire,"Dialyse péritonéale, avec un maximum de quatre séances par jour, par séance",4,AMI,ATM
+TJTY013,soisn portant sur l'appareil digestif et urinaire,"Dialyse péritonéale par cycleur : branchement ou débranchement, par séance",4,AMI,ATM
+TJTY014,soisn portant sur l'appareil digestif et urinaire,"Dialyse péritonéale par cycleur : organisation de la surveillance, par période de douze heures",4,AMI,ATM

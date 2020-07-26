@@ -14,15 +14,21 @@ CREATE TABLE general.Etablissement (
     sitewebEtablissement VARCHAR(20),
     logoEtablissement VARCHAR(200)
 );
+CREATE TABLE general.Prix_Actes(
+    idPrixActes SERIAL PRIMARY KEY,
+    lettreCleActe VARCHAR(10) UNIQUE,
+    prixActe INT
+);
 CREATE TABLE general.Actes (
     idActe SERIAL PRIMARY KEY,
     codeActe VARCHAR(30) UNIQUE,
     typeActe VARCHAR(100),
     libelleActe TEXT,
-    lettreCleActe VARCHAR(10),
+    lettreCleActe VARCHAR(10) REFERENCES general.Prix_Actes(lettreCleActe) ON UPDATE CASCADE ON DELETE CASCADE,
+    prixLettreCleActe NUMERIC(10, 2),
     regroupementActe VARCHAR(10),
-    cotationActe VARCHAR(10),
-    prixActe VARCHAR(20)
+    cotationActe NUMERIC(10, 2),
+    prixActe NUMERIC(10, 2) GENERATED ALWAYS AS (cotationActe * prixLettreCleActe) STORED
 );
 CREATE TABLE general.UniteFonctionnelle ();
 CREATE TABLE general.UniteMedicale ();
