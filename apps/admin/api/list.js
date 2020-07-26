@@ -74,7 +74,7 @@ exports.search_user_by_app = {
     text: "SELECT * FROM Users WHERE  codeApp = $1 AND nomUser ~* $2 OR prenomsUser ~* $2  ORDER BY nomUser, prenomsUser"
 }
 
- exports.details_user_by_app = {
-     name: "details_user_by_app",
-     text: "SELECT idUser,nomUser, prenomsUser,posteUser, contactUser, mailUser, labelProfil, nomApp, labelDroit, Droit_Profil.codeDroit FROM Profils, Users, Apps,Droits, Droit_Profil WHERE Droits.codeDroit=Droit_Profil.codeDroit AND Profils.idProfil=Droit_Profil.idProfil AND  Users.profilUser=Profils.idProfil AND Profils.codeApp = Apps.codeApp AND idUser=$1"
- }
+exports.details_user_by_app = {
+    name: "details_user_by_app",
+    text: "SELECT idUser,nomUser, prenomsUser,posteUser, contactUser, mailUser, labelProfil, nomApp, labelDroit, Droit_Profil.codeDroit FROM Profils, Users, Apps,Droits, Droit_Profil WHERE Droits.codeDroit=Droit_Profil.codeDroit AND Profils.idProfil=Droit_Profil.idProfil AND  Users.profilUser=Profils.idProfil AND Profils.codeApp = Apps.codeApp AND idUser=$1"
+}

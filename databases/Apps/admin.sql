@@ -1,5 +1,18 @@
 DROP SCHEMA admin CASCADE;
 CREATE SCHEMA admin;
+CREATE TABLE admin.Apps (
+    idApp SERIAL PRIMARY KEY,
+    codeApp VARCHAR(20) UNIQUE,
+    nomApp VARCHAR(50),
+    descApp VARCHAR(50)
+);
+CREATE TABLE admin.Profils (
+    idProfil SERIAL PRIMARY KEY,
+    labelProfil VARCHAR(100) UNIQUE,
+    dateProfil DATE DEFAULT now(),
+    codeApp VARCHAR(20) REFERENCES admin.Apps(codeApp),
+    permissionsProfil TEXT
+);
 CREATE TABLE admin.Users (
     idUser SERIAL PRIMARY KEY,
     nomUser VARCHAR(20),
@@ -7,40 +20,10 @@ CREATE TABLE admin.Users (
     contactUser VARCHAR(20),
     mailUser VARCHAR(30),
     posteUser VARCHAR(100),
-    profilUser INTEGER,
-    codeApp VARCHAR(15),
+    serviceUser VARCHAR(100),
     loginUser VARCHAR(100),
-    passUser VARCHAR(255)
-);
-CREATE TABLE admin.Login (
-    idLogin SERIAL PRIMARY KEY,
-    loginUser VARCHAR(255),
-    passUser VARCHAR(255)
-);
-CREATE TABLE admin.Apps (
-    idApp SERIAL PRIMARY KEY,
-    codeApp VARCHAR(20),
-    nomApp VARCHAR(50),
-    descApp VARCHAR(50)
-);
-CREATE TABLE admin.Droits(
-    idDroit SERIAL PRIMARY KEY,
-    codeDroit VARCHAR(10),
-    codeApp VARCHAR(15),
-    labelDroit VARCHAR(100)
-);
-CREATE TABLE admin.Profils (
-    idProfil SERIAL PRIMARY KEY,
-    labelProfil VARCHAR(100),
-    auteurProfil VARCHAR(30),
-    dateProfil VARCHAR(100),
-    codeApp VARCHAR(15),
-    UNIQUE (labelProfil)
-);
-CREATE TABLE admin.Droit_Profil (
-    idDroitProfil SERIAL PRIMARY KEY,
-    idProfil INT NOT NULL,
-    codeDroit VARCHAR(10)
+    passUser VARCHAR(255),
+    profilUser VARCHAR(100) REFERENCES admin.Profils(labelprofil)
 );
 CREATE TABLE admin.Logs (
     idLogs SERIAL PRIMARY KEY,

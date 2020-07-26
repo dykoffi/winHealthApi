@@ -38,8 +38,9 @@ exports.add_facture = {
         resteAssuranceFacture,
         partPatientFacture,
         restePatientFacture,
-        sejourFacture
-        ) VALUES ($1,$2,$3,get_total_facture($4),get_part_assurance($4),get_part_assurance($4),get_part_patient($4),get_part_patient($4),$4)`
+        sejourFacture,
+        typeFacture
+        ) VALUES ($1,$2,$3,get_total_facture($4),get_part_assurance($4),get_part_assurance($4),get_part_patient($4),get_part_patient($4),$4,'original')`
 }
 exports.add_sejour_acte = {
     name: `add_sejour_acte`,

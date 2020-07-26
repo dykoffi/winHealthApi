@@ -14,6 +14,7 @@ const {
     add_transaction,
     add_assurance,
     add_bordereau,
+    add_facture_avoir,
     //autres
     encaisser_patient_facture,
     encaisser_assurance_facture
@@ -81,15 +82,18 @@ const {
     update_compte,
     retrait_facture_recue,
     retrait_facture_valide,
+    retrait_facture_bordereau,
     update_assurance,
     update_sejour_assurance,
     update_statut_bordereau,
-    update_facture
+    update_facture,
+    report_facture
 } = require("../apps/gap/api/update")
 const {
     delete_patient,
     delete_sejour,
     delete_facture,
+    delete_facture_bordereau,
     delete_compte,
     delete_assurance
 } = require("../apps/gap/api/delete")
@@ -544,6 +548,67 @@ router
             }
         });
     })
+    .post('/add/facture_avoir/:numeroFacture', (req, res) => {
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        console.log(body);
+        const { montant, commentaire } = body
+        client.query(`SELECT * FROM gap.Factures WHERE numeroFacture=$1`, [req.params.numeroFacture], (err, result) => {
+            if (err) console.log(err)
+            else {
+                const {
+                    datefacture,
+                    heurefacture,
+                    auteurfacture,
+                    partassurancefacture,
+                    resteassurancefacture,
+                    partpatientfacture,
+                    restepatientfacture,
+                    sejourfacture,
+                } = result.rows[0]
+                client.query(`
+                    INSERT INTO gap.Factures (
+                        dateFacture,
+                        heureFacture,
+                        auteurFacture,
+                        montantTotalFacture,
+                        partAssuranceFacture,
+                        resteAssuranceFacture,
+                        partPatientFacture,
+                        restePatientFacture,
+                        sejourFacture,
+                        typeFacture,
+                        commentaireFacture,
+                        parentFacture
+                ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'avoir',$10,$11) RETURNING numeroFacture, parentFacture
+         `, [
+                    datefacture,
+                    heurefacture,
+                    auteurfacture,
+                    montant,
+                    partassurancefacture,
+                    resteassurancefacture,
+                    partpatientfacture,
+                    restepatientfacture,
+                    sejourfacture,
+                    commentaire,
+                    req.params.numeroFacture
+                ], (err, result) => {
+                    if (err) console.log(err)
+                    else {
+                        client.query(`UPDATE gap.Factures SET parentFacture=$1 WHERE numeroFacture=$2`, [result.rows[0].numerofacture, result.rows[0].parentfacture], (err, result) => {
+                            if (err) console.log(err);
+                            else {
+                                res.header(headers);
+                                res.status(status);
+                                res.json({ message: { type: "info", label: "Facture encaissée" }, ...result });
+                            }
+                        }
+                        )
+                    }
+                });
+            }
+        })
+    })
     .post('/encaisser_patient/all_factures', (req, res) => {
         var body = []
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
@@ -978,7 +1043,7 @@ router
     .post('/add/factures_recues', (req, res) => {
         let body = []
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        client.query(format('UPDATE gap.Factures SET statutFactures=%L WHERE numeroFacture IN (%L)', 'recu', body), (err, result) => {
+        client.query(format('UPDATE gap.Factures SET statutfacture=%L WHERE numeroFacture IN (%L)', 'recu', body), (err, result) => {
             if (err) {
                 console.log(err);
             } else {
@@ -992,7 +1057,7 @@ router
     .post('/add/factures_valides', (req, res) => {
         let body = []
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        client.query(format('UPDATE gap.Factures SET statutFactures=%L WHERE numeroFacture IN (%L)', 'valide', body), (err, result) => {
+        client.query(format('UPDATE gap.Factures SET statutfacture=%L WHERE numeroFacture IN (%L)', 'valide', body), (err, result) => {
             if (err) { console.log(err); } else {
                 res.header(headers);
                 res.status(status);
@@ -1025,7 +1090,7 @@ router
         const { nomassurance, nomgarant, typeSejour, limiteDateString, montanttotal, partAssurance, partPatient, factures } = body
 
         client.query(add_bordereau, [moment().format("DD-MM-YYYY"), moment().format("HH:MM"),
-            limiteDateString, nomassurance, nomgarant, typeSejour, montanttotal, partAssurance, partPatient, "Création"],
+            limiteDateString, nomassurance, nomgarant, typeSejour, montanttotal, partAssurance, partPatient, "Envoie"],
             (err, result) => {
                 listFactures = factures.map(facture => [result.rows[0].numerobordereau, facture])
                 if (err) console.log(err);
@@ -1033,7 +1098,7 @@ router
                     client.query(format("INSERT INTO gap.Bordereau_factures(numeroBordereau, numeroFacture) VALUES %L", listFactures), (err, result) => {
                         if (err) console.log(err);
                         else {
-                            client.query(format('UPDATE gap.Factures SET statutFactures=%L WHERE numeroFacture IN (%L)', 'bordereau', factures), (err, result) => {
+                            client.query(format('UPDATE gap.Factures SET statutfacture=%L WHERE numeroFacture IN (%L)', 'bordereau', factures), (err, result) => {
                                 if (err) {
                                     console.log(err);
                                 } else {
@@ -1050,10 +1115,8 @@ router
     })
     .post('/update/statut_bordereau/:numeroBordereau', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        const { statut } = body
-        console.log(body);
-
-        client.query(update_statut_bordereau, [statut, req.params.numeroBordereau], (err, result) => {
+        const { statut, commentaire } = body
+        client.query(update_statut_bordereau, [statut, commentaire, req.params.numeroBordereau], (err, result) => {
             if (err) console.log(err)
             else {
                 res.header(headers);
@@ -1062,6 +1125,36 @@ router
             }
         })
     })
+    .post('/report/facture/:numeroFacture', (req, res) => {
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const { erreur, comment } = body
+        client.query(report_facture, [erreur, comment, req.params.numeroFacture], (err, result) => {
+            if (err) console.log(err)
+            else {
+                if (erreur === "refuse") {
+                    client.query(delete_facture_bordereau, [req.params.numeroFacture], (err, result) => {
+                        if (err) console.log(err)
+                        else {
+                            client.query(retrait_facture_bordereau, [req.params.numeroFacture], (err, result) => {
+                                if (err) console.log(err)
+                                else {
+                                    res.header(headers);
+                                    res.status(status);
+                                    res.json({ message: { type: "info", label: "" }, ...result });
+                                }
+                            })
+                        }
+                    })
+                } else {
+                    res.header(headers);
+                    res.status(status);
+                    res.json({ message: { type: "info", label: "" }, ...result });
+                }
+            }
+        })
+    })
+
+
 //Actes
 router
     .get('/list/actes', (req, res) => {

@@ -27,3 +27,8 @@ exports.delete_assurance = {
     name : 'delete_assurance',
     text : `DELETE FROM gap.Assurances WHERE idAssurance=$1`
 }
+
+exports.delete_facture_bordereau = {
+    name: "delete_facture_bordereau",
+    text: `DELETE FROM gap.Bordereau_factures WHERE numeroFacture=$1`
+}

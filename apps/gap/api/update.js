@@ -60,12 +60,17 @@ exports.update_patient = {
 
 exports.retrait_facture_recue = {
     name: "retrait_facture_recue",
-    text: `UPDATE gap.Factures SET statutFactures='attente' WHERE numeroFacture=$1`
+    text: `UPDATE gap.Factures SET statutfacture='attente' WHERE numeroFacture=$1`
 }
 
 exports.retrait_facture_valide = {
     name: "retrait_facture_valide",
-    text: `UPDATE gap.Factures SET statutFactures='recu' WHERE numeroFacture=$1`
+    text: `UPDATE gap.Factures SET statutfacture='recu' WHERE numeroFacture=$1`
+}
+
+exports.retrait_facture_bordereau = {
+    name: "retrait_facture_bordereau",
+    text: `UPDATE gap.Factures SET statutfacture='recu' WHERE numeroFacture=$1`
 }
 
 exports.update_sejour_assurance = {
@@ -97,6 +102,19 @@ exports.update_statut_bordereau = {
     name: 'update_statut_bordereau',
     text: `
         UPDATE gap.Bordereaux SET
-            statutBordereau=$1 WHERE numeroBordereau=$2
+            statutBordereau=$1,
+            commentaireBordereau=$2
+        WHERE numeroBordereau=$3
         `
 }
+
+exports.report_facture = {
+    name: "report_facture",
+    text: `
+        UPDATE gap.Factures SET 
+            erreurFacture=$1,
+            commentaireFacture=$2
+        WHERE numeroFacture=$3
+    `
+}
+

@@ -84,6 +84,8 @@ CREATE TABLE gap.Sejour_Acte (
 CREATE TABLE gap.Factures (
     idFacture SERIAL PRIMARY KEY,
     numeroFacture VARCHAR(100) UNIQUE DEFAULT get_numeroFacture(),
+    typeFacture VARCHAR(40),
+    parentFacture VARCHAR(50) DEFAULT '',
     dateFacture VARCHAR(20),
     heureFacture VARCHAR(10),
     auteurFacture VARCHAR(100),
@@ -92,7 +94,9 @@ CREATE TABLE gap.Factures (
     partPatientFacture INT DEFAULT 0,
     resteAssuranceFacture INT DEFAULT 0,
     restePatientFacture INT DEFAULT 0,
-    statutFactures VARCHAR(50) DEFAULT 'attente',
+    statutFacture VARCHAR(50) DEFAULT 'attente',
+    erreurFacture VARCHAR(100) DEFAULT '',
+    commentaireFacture TEXT DEFAULT '',
     sejourFacture VARCHAR(30) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE
 );
 CREATE TABLE gap.Paiements (
@@ -141,12 +145,11 @@ CREATE TABLE gap.Bordereaux (
     montantTotal INT,
     partAssurance INT,
     partPatient INT,
-    statutBordereau VARCHAR(100)
+    statutBordereau VARCHAR(100),
+    commentaireBordereau TEXT
 );
 CREATE TABLE gap.Bordereau_factures (
     idBordereau_facture SERIAL PRIMARY KEY,
     numeroFacture VARCHAR(100) REFERENCES gap.Factures (numerofacture),
-    numeroBordereau VARCHAR(100) REFERENCES gap.Bordereaux (numeroBordereau),
-    statutFacture VARCHAR(10),
-    commentaireFacture VARCHAR(200)
+    numeroBordereau VARCHAR(100) REFERENCES gap.Bordereaux (numeroBordereau)
 );

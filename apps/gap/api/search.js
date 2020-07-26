@@ -29,12 +29,11 @@ exports.search_facture = {
     name: "research_facture",
     text: `SELECT * FROM
     gap.Factures, 
-    gap.Bordereaux,
+    gap.Sejours,
     gap.DossierAdministratif
     WHERE 
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
-        Bordereaux.statusSejour='en attente' AND
         numeroFacture  ~* $1`
 }
 
@@ -75,7 +74,7 @@ exports.search_bordereaux_for_all_assurance_garant = {
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
         Bordereaux.dateCreationBordereau::date <= $2::date AND
-        Bordereaux.typesejour = $3
+        Bordereaux.typeSejourBordereau = $3
         `
 }
 //3
@@ -100,7 +99,7 @@ exports.search_bordereaux_for_all_assurance = {
         Bordereaux.dateCreationBordereau::date <= $2::date AND
         Bordereaux.organismeBordereau = $3 AND
         Bordereaux.typeSejourBordereau = $4
-        `
+    `
 }
 
 //5
