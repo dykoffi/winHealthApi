@@ -19,17 +19,20 @@ exports.list_sejours = {
 }
 exports.details_sejour = {
     name: "details_sejour",
-    text: `SELECT get_delai_controle($1) delai,  get_controle_sejour($1) nbcontrole, * FROM 
-    gap.Factures, 
-    general.Actes, 
-    gap.Sejours, 
-    general.Etablissement,
-    gap.DossierAdministratif
+    text: `SELECT get_delai_controle($1) delai, get_controle_sejour($1) nbcontrole, * FROM 
+    gap.Factures F, 
+    gap.Sejour_Acte SA,
+    general.Actes A, 
+    gap.Sejours S, 
+    general.Etablissement E,
+    gap.DossierAdministratif D
     WHERE 
-        sejourFacture=numeroSejour AND
-        etablissementSejour=idEtablissement AND
+        F.sejourFacture=S.numeroSejour AND
+        S.etablissementSejour=E.idEtablissement AND
         patientSejour=idDossier AND
-        Sejours.numeroSejour=$1  
+        S.numeroSejour=SA.numeroSejour AND
+        A.codeActe=SA.codeActe AND
+        S.numeroSejour=$1  
     `
 }
 exports.list_actes = {
@@ -136,8 +139,8 @@ exports.imprimer_facture = {
         sejourFacture=numeroSejour AND
         etablissementSejour=idEtablissement AND
         patientSejour=idDossier AND
-        idDossier=$1
-    ORDER BY idFacture DESC LIMIT 1    
+        ippPatient=$1
+    ORDER BY idFacture DESC LIMIT 1   
     `
 }
 exports.annuler_facture = {

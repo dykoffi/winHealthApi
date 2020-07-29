@@ -65,6 +65,7 @@ CREATE TABLE gap.Sejours (
     -- consultation, Hospitalisation ou soins
     statusSejour VARCHAR(50),
     -- en cours, termine ou annule ou les differentes attentes
+    medecinSejour VARCHAR(200),
     patientSejour INTEGER REFERENCES gap.DossierAdministratif (idDossier) ON DELETE CASCADE,
     etablissementSejour INTEGER REFERENCES general.Etablissement (idEtablissement) ON DELETE RESTRICT,
     --assurance
@@ -78,8 +79,13 @@ CREATE TABLE gap.Sejours (
 );
 CREATE TABLE gap.Sejour_Acte (
     idSejourActe SERIAL PRIMARY KEY,
-    numeroSejour VARCHAR(20) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE,
-    codeActe VARCHAR(20) REFERENCES general.Actes (codeActe) ON DELETE CASCADE
+    numeroSejour VARCHAR(20) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE ON UPDATE CASCADE,
+    codeActe VARCHAR(20) REFERENCES general.Actes (codeActe) ON DELETE CASCADE ON UPDATE CASCADE,
+    prixUnique NUMERIC(15, 2),
+    plafondAssurance NUMERIC(15, 2),
+    quantite INT,
+    prixActe NUMERIC(15, 2),
+    prixActeAssurance NUMERIC(15, 2) GENERATED ALWAYS AS (plafondAssurance * quantite) STORED
 );
 CREATE TABLE gap.Factures (
     idFacture SERIAL PRIMARY KEY,
@@ -97,7 +103,7 @@ CREATE TABLE gap.Factures (
     statutFacture VARCHAR(50) DEFAULT 'attente',
     erreurFacture VARCHAR(100) DEFAULT '',
     commentaireFacture TEXT DEFAULT '',
-    sejourFacture VARCHAR(30) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE
+    sejourFacture VARCHAR(30) REFERENCES gap.Sejours (numeroSejour) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE gap.Paiements (
     idPaiement SERIAL PRIMARY KEY,

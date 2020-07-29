@@ -69,21 +69,28 @@ SELECT concat(
 -- Avoir le montant total de la facture
 CREATE OR REPLACE FUNCTION get_total_facture(numeroSejour TEXT) RETURNS INT AS $$
 SELECT SUM(prixActe::INT)::INT
-FROM gap.Sejours,
-    general.Actes,
-    gap.Sejour_Acte
-WHERE Sejours.numeroSejour = Sejour_Acte.numeroSejour
-    AND Sejour_Acte.codeActe = Actes.codeActe
-    AND Sejours.numeroSejour = $1
-GROUP BY Sejours.numeroSejour $$ LANGUAGE SQL STRICT;
+FROM gap.Sejour_Acte
+WHERE Sejour_Acte.numeroSejour = $1
+GROUP BY Sejour_Acte.numeroSejour $$ LANGUAGE SQL STRICT;
+-- Avoir le montant total de la facture pour l'assurance avec les plafond
+DROP FUNCTION get_total_facture_Assurance;
+CREATE FUNCTION get_total_facture_Assurance(numeroSejour TEXT) RETURNS INT AS $$
+SELECT SUM(prixActeAssurance::INT)::INT
+FROM gap.Sejour_Acte
+WHERE Sejour_Acte.numeroSejour = $1
+GROUP BY Sejour_Acte.numeroSejour $$ LANGUAGE SQL STRICT;
 -- Avoir la part de l'assurance pour une facture donnée
-CREATE OR REPLACE FUNCTION get_part_assurance(numeroSejour TEXT) RETURNS INT AS $$
-SELECT ((taux::INT) *(get_total_facture($1))) / 100
+DROP FUNCTION get_part_assurance;
+CREATE FUNCTION get_part_assurance(numeroSejour TEXT) RETURNS NUMERIC(15, 2) AS $$
+SELECT (
+        ((taux::INT) *(get_total_facture_Assurance($1))) / 100
+    )::NUMERIC(15, 2)
 FROM gap.Sejours
 WHERE numeroSejour = $1 $$ LANGUAGE SQL STRICT;
 -- Avoir la part du patient pour une facture donnée
-CREATE OR REPLACE FUNCTION get_part_patient(numeroSejour TEXT) RETURNS INT AS $$
-SELECT get_total_facture($1) - get_part_assurance($1) $$ LANGUAGE SQL STRICT;
+DROP FUNCTION get_part_patient;
+CREATE OR REPLACE FUNCTION get_part_patient(numeroSejour TEXT) RETURNS NUMERIC(15, 2) AS $$
+SELECT (get_total_facture($1) - get_part_assurance($1))::NUMERIC(15, 2) $$ LANGUAGE SQL STRICT;
 -- AVOIR LES PAIEMENT D'UN PATIENT DONNÉ
 CREATE OR REPLACE FUNCTION get_paiement_patient(numeroFacture TEXT) RETURNS INT AS $$
 SELECT SUM(montantPaiement::INT)::INT
@@ -101,11 +108,15 @@ WHERE numeroFacture = facturePaiement
     AND sourcePaiement = 'Assurance'
     AND numeroFacture = $1 $$ LANGUAGE SQL STRICT;
 -- AVOIR LE RESTE DE LA FACTURE POUR LES PATIENTS
-CREATE OR REPLACE FUNCTION get_reste_patient(numeroSejour TEXT, numeroFacture TEXT) RETURNS INT AS $$
+DROP FUNCTION get_reste_patient;
+CREATE FUNCTION get_reste_patient(numeroSejour TEXT, numeroFacture TEXT) RETURNS NUMERIC(15, 2) AS $$
 SELECT get_part_patient(numeroSejour) - get_paiement_patient(numeroFacture) $$ LANGUAGE SQL STRICT;
 -- AVOIR LES RESTES LA FACTURES POUR LES ASSURANCES 
-CREATE OR REPLACE FUNCTION get_reste_assurance(numeroSejour TEXT, numeroFacture TEXT) RETURNS INT AS $$
-SELECT get_part_assurance(numeroSejour) - get_paiement_assurance(numeroFacture) $$ LANGUAGE SQL STRICT;
+DROP FUNCTION get_reste_assurance;
+CREATE OR REPLACE FUNCTION get_reste_assurance(numeroSejour TEXT, numeroFacture TEXT) RETURNS NUMERIC(15, 2) AS $$
+SELECT (
+        get_part_assurance(numeroSejour) - get_paiement_assurance(numeroFacture)
+    )::NUMERIC(15, 2) $$ LANGUAGE SQL STRICT;
 --CONTROLE
 CREATE OR REPLACE FUNCTION get_controle_sejour(numeroSejour TEXT) RETURNS INT AS $$
 SELECT COUNT(*)::INT nb_controle
@@ -128,6 +139,6 @@ WHERE Comptes.numeroCompte = $1
     AND compteTransaction = numeroCompte
 GROUP BY numeroCompte $$ LANGUAGE SQL STRICT;
 CREATE OR REPLACE FUNCTION get_nbfacture_bordereau (numeroBordereau TEXT) RETURNS INT AS $$
-SELECT COUNT(*)
+SELECT COUNT(*)::INT
 FROM gap.Bordereau_factures
 WHERE numeroBordereau = $1 $$ LANGUAGE SQL STRICT;

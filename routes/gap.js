@@ -3,6 +3,7 @@ const format = require('pg-format')
 const client = require("../constants/connection");
 const moment = require('moment')
 const { headers, status } = require('../constants/query')
+const io = require('socket.io-client')
 const {
     //ajouter
     add_patient,
@@ -99,7 +100,8 @@ const {
 } = require("../apps/gap/api/delete")
 
 moment.locale('fr')
-
+const socket = io("http://192.168.16.192:8000")
+socket.emit('facture_nouvelle')
 //patient
 router
     .post('/add/patient', function (req, res) {
@@ -266,8 +268,6 @@ router
 router
     .post('/add/sejour/:patient', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        console.log(body);
-
         const {
             type,
             actes,
@@ -307,20 +307,21 @@ router
                 console.log(err)
             } else {
                 const sejour = result.rows[0].numerosejour
-                actes.forEach(acte => {
-                    client.query(add_sejour_acte, [sejour, acte], (err, result) => { })
-                });
-
-                client.query(add_facture, [
-                    moment().format('DD-MM-YYYY'),
-                    moment().format('hh:mm'),
-                    nomuser + " " + prenomsuser,
-                    sejour
-                ], (err, result) => {
+                client.query(format("INSERT INTO gap.Sejour_Acte (numeroSejour,codeActe,prixUnique,plafondAssurance,quantite,prixActe) VALUES %L", body.actes.map(acte => [sejour, acte])), (err, result) => {
                     if (err) { console.log(err) } else {
-                        res.header(headers);
-                        res.status(status);
-                        res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
+                        client.query(add_facture, [
+                            moment().format('DD-MM-YYYY'),
+                            moment().format('hh:mm'),
+                            nomuser + " " + prenomsuser,
+                            sejour
+                        ], (err, result) => {
+                            if (err) { console.log(err) } else {
+                                socket.emit('facture_nouvelle')
+                                res.header(headers);
+                                res.status(status);
+                                res.json({ message: { type: "info", label: "Liste des sejours actualisée" }, ...result });
+                            }
+                        })
                     }
                 })
             }
@@ -505,8 +506,8 @@ router
             res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
-    .get('/imprimer/facture/:idpatient', (req, res) => {
-        client.query(imprimer_facture, [req.params.idpatient], (err, result) => {
+    .get('/imprimer/facture/:ipppatient', (req, res) => {
+        client.query(imprimer_facture, [req.params.ipppatient], (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);

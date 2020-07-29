@@ -82,6 +82,7 @@ io.sockets.on("connection", function (socket, pseudo) {
         socket.broadcast.emit("facture_encaisser", { sejour, patient })
     })
     socket.on("facture_nouvelle", () => {
+        console.log('facture nouvelle');
         socket.broadcast.emit("facture_nouvelle")
     })
     socket.on("constantes_add", ({ sejour, patient }) => {
@@ -90,7 +91,7 @@ io.sockets.on("connection", function (socket, pseudo) {
 
     socket.on('project_facture', (facture) => {
         console.log("facturation");
-        
+
         socket.emit("project_facture", facture)
     })
 
