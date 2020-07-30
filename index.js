@@ -2,7 +2,7 @@ const app = require('./app');
 const fs = require('fs')
 const path = require('path')
 const debug = require('debug')('api:server');
-const https = require('https');
+const http = require('http');
 const child = require('child_process');
 const { dirname } = require('path');
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
@@ -10,11 +10,13 @@ const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 
 const server =
-    https
-        .createServer({
-            key: fs.readFileSync('server.key'),
-            cert: fs.readFileSync('server.cer')
-        }, app)
+    http
+        .createServer(
+            //     {
+            //     key: fs.readFileSync('server.key'),
+            //     cert: fs.readFileSync('server.cer')
+            // }, 
+            app)
         .listen(port)
         .on('error', onError)
         .on('listening', onListening);
