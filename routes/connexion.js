@@ -6,9 +6,7 @@ const { verify_user } = require('../apps/connexion/api/verify')
 const { CONNEXION_SERVEUR } = require('../apps/connexion/logs/actions')
 const { addLog } = require('../apps/global/add')
 const { CONNEXION } = require('../apps/global/logTypes')
-
 moment.locale('fr')
-
 router
     .post('/verify/user', function (req, res) {
         var body
@@ -19,7 +17,6 @@ router
                 res.header(headers)
                 res.status(status)
                 const [user] = result.rows
-                console.log(result.rows)
                 if (user !== undefined) {
                     addLog(client, CONNEXION, user.mailuser, CONNEXION_SERVEUR, moment().format("DD MMMM YYYY"), moment().format("HH:mm:ss"), user.codeapp)
                     res.json(user)
@@ -27,5 +24,4 @@ router
             }
         })
     })
-
 module.exports = router

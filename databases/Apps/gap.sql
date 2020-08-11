@@ -156,6 +156,6 @@ CREATE TABLE gap.Bordereaux (
 );
 CREATE TABLE gap.Bordereau_factures (
     idBordereau_facture SERIAL PRIMARY KEY,
-    numeroFacture VARCHAR(100) REFERENCES gap.Factures (numerofacture),
-    numeroBordereau VARCHAR(100) REFERENCES gap.Bordereaux (numeroBordereau)
+    numeroFacture VARCHAR(100) REFERENCES gap.Factures (numerofacture) ON DELETE CASCADE ON UPDATE CASCADE,
+    numeroBordereau VARCHAR(100) REFERENCES gap.Bordereaux (numeroBordereau) ON DELETE CASCADE ON UPDATE CASCADE
 );

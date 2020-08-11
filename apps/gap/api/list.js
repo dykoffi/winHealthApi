@@ -53,7 +53,21 @@ exports.list_all_factures = {
     gap.DossierAdministratif
     WHERE 
         patientSejour=idDossier AND
-        sejourFacture=numeroSejour
+        sejourFacture=numeroSejour AND
+        typeFacture='original'
+        ORDER BY idFacture`
+}
+
+exports.list_factures_avoir = {
+    name: "list_factures_avoir",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    gap.Sejours,
+    gap.DossierAdministratif
+    WHERE 
+        patientSejour=idDossier AND
+        sejourFacture=numeroSejour AND
+        typeFacture='avoir'
         ORDER BY idFacture`
 }
 
@@ -66,7 +80,9 @@ exports.list_factures_attentes = {
     WHERE 
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
-        restePatientFacture<>0 ORDER BY idFacture`
+        restePatientFacture<>0 AND
+        typeFacture='original'
+        ORDER BY idFacture`
 }
 
 exports.list_factures_patient = {
@@ -78,7 +94,9 @@ exports.list_factures_patient = {
     WHERE 
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
-        ipppatient=$1  ORDER BY idFacture`
+        ipppatient=$1 AND
+        typeFacture='original'
+        ORDER BY idFacture`
 }
 
 exports.list_factures_payees_patient = {
@@ -91,7 +109,9 @@ exports.list_factures_payees_patient = {
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
         restePatientFacture=0 AND
-        ipppatient=$1 ORDER BY idFacture`
+        ipppatient=$1 AND
+        typeFacture='original'
+        ORDER BY idFacture`
 }
 
 exports.list_factures_impayees_patient = {
@@ -104,7 +124,9 @@ exports.list_factures_impayees_patient = {
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
         restePatientFacture<>0 AND
-        ipppatient=$1 ORDER BY idFacture`
+        ipppatient=$1 AND
+        typeFacture='original'
+        ORDER BY idFacture`
 }
 
 exports.verify_compte = {
@@ -123,7 +145,8 @@ exports.details_facture = {
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
         Sejours.statusSejour='en attente' AND
-        numeroFacture=$1`
+        numeroFacture=$1 AND
+        typeFacture='original'`
 }
 
 exports.imprimer_facture = {
@@ -139,7 +162,8 @@ exports.imprimer_facture = {
         sejourFacture=numeroSejour AND
         etablissementSejour=idEtablissement AND
         patientSejour=idDossier AND
-        ippPatient=$1
+        ippPatient=$1 AND
+        typeFacture='original'
     ORDER BY idFacture DESC LIMIT 1   
     `
 }
@@ -209,7 +233,8 @@ exports.list_factures_assurances = {
     WHERE 
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
-        gestionnaire <> ''
+        gestionnaire <> '' AND
+        typeFacture='original'
         ORDER BY idFacture`
 }
 //1
@@ -226,7 +251,8 @@ exports.list_factures_for_all_assurance_garant_typesejour = {
         Sejours.gestionnaire = Assurances.nomAssurance AND
         DossierAdministratif.idDossier = Sejours.patientSejour AND
         Factures.dateFacture::date >= $1::date AND 
-        Factures.dateFacture::date <= $2::date 
+        Factures.dateFacture::date <= $2::date AND
+        typeFacture='original'
         `
 }
 
@@ -244,7 +270,8 @@ exports.list_factures_for_all_assurance_garant = {
         Sejours.gestionnaire = Assurances.nomAssurance AND
         DossierAdministratif.idDossier = Sejours.patientSejour AND
         Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
-        Sejours.typesejour = $3
+        Sejours.typesejour = $3 AND
+        typeFacture='original'
         `
 }
 //3
@@ -256,7 +283,8 @@ exports.list_factures_for_all_assurance_typesejour = {
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
                 Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
-                Sejours.organisme = $3
+                Sejours.organisme = $3 AND
+                typeFacture='original'
         `
 }
 
@@ -270,7 +298,8 @@ exports.list_factures_for_all_assurance = {
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
                 Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
                 Sejours.organisme = $3 AND
-                Sejours.typeSejour = $4
+                Sejours.typeSejour = $4 AND
+                typeFacture='original'
         `
 }
 
@@ -283,7 +312,8 @@ exports.list_factures_for_all_garant_typesejour = {
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
                 Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
-                Sejours.gestionnaire = $3
+                Sejours.gestionnaire = $3 AND
+                typeFacture='original'
         `
 }
 
@@ -298,7 +328,8 @@ exports.list_factures_for_all_garant = {
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
                 Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
                 Sejours.gestionnaire = $3 AND
-                Sejours.typeSejour = $4
+                Sejours.typeSejour = $4 AND
+                typeFacture='original'
         `
 }
 
@@ -313,7 +344,8 @@ exports.list_factures_for_all_typesejour = {
                 Factures.dateFacture::date >= $1::date AND 
                 Factures.dateFacture::date <= $2::date AND
                 Sejours.gestionnaire = $3 AND
-                Sejours.organisme = $4
+                Sejours.organisme = $4 AND
+                typeFacture='original'
         `
 }
 
@@ -328,7 +360,8 @@ exports.list_factures_by_assurance_garant_typesejour = {
                 Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
                 Sejours.gestionnaire = $3 AND
                 Sejours.organisme = $4 AND
-                Sejours.typeSejour = $5
+                Sejours.typeSejour = $5 AND
+                typeFacture='original'
         `
 }
 

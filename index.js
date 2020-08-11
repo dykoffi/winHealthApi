@@ -5,6 +5,7 @@ const debug = require('debug')('api:server');
 const http = require('http');
 const child = require('child_process');
 const { dirname } = require('path');
+
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);

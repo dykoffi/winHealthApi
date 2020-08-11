@@ -28,6 +28,7 @@ const {
     list_actes,
     list_actesSejour,
     list_all_factures,
+    list_factures_avoir,
     list_factures_assurances,
     list_factures_attentes,
     list_factures_patient,
@@ -283,6 +284,7 @@ router
             assurePrinc,
             matriculeAssure,
             numeroPEC,
+            medecin,
             taux
         } = body
         const { params: { patient } } = req
@@ -301,6 +303,7 @@ router
             matriculeAssure,
             numeroPEC,
             taux,
+            medecin,
             1
         ], (err, result) => {
             if (err) {
@@ -343,7 +346,6 @@ router
             res.json({ message: { type: "info", label: "" }, ...result });
         });
     })
-
 
 //controles 
 router
@@ -422,7 +424,6 @@ router
         });
     })
 
-
 //TRANSACTION
 router
     .post("/add/transaction", (req, res) => {
@@ -447,11 +448,18 @@ router
         });
     })
 
-
 //factures
 router
     .get('/list/factures', (req, res) => {
         client.query(list_all_factures, (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: " " }, ...result });
+        });
+    })
+    .get('/list/factures_avoir', (req, res) => {
+        client.query(list_factures_avoir, (err, result) => {
             err && console.log(err)
             res.header(headers);
             res.status(status);
@@ -516,8 +524,6 @@ router
     })
     .post('/encaisser_patient/facture/:numeroFacture', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        console.log(body);
-
         const { modepaiement, montantrecu, compte } = body
         client.query(encaisser_patient_facture, [modepaiement, montantrecu, req.params.numeroFacture], (err, result) => {
             if (err) console.log(err)
@@ -551,7 +557,6 @@ router
     })
     .post('/add/facture_avoir/:numeroFacture', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        console.log(body);
         const { montant, commentaire } = body
         client.query(`SELECT * FROM gap.Factures WHERE numeroFacture=$1`, [req.params.numeroFacture], (err, result) => {
             if (err) console.log(err)
@@ -585,7 +590,7 @@ router
                     datefacture,
                     heurefacture,
                     auteurfacture,
-                    montant,
+                    -montant,
                     partassurancefacture,
                     resteassurancefacture,
                     partpatientfacture,
@@ -734,12 +739,10 @@ router
         });
     })
 
-
 //Assurances
 router
     .post("/add/assurance", (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        console.log(body)
         const { nom, code, type, fax, telephone, mail, adresse, site_web } = body
         client.query(add_assurance, [nom, code, type, fax, telephone, mail, adresse, site_web], (err, result) => {
             if (err) console.log(err)
@@ -802,7 +805,6 @@ router
             }
         });
     })
-
 
 //bordereaux
 router
@@ -1026,11 +1028,6 @@ router
             }
         });
     })
-    .get('/list/bordereaux/:typeBordereau', (req, res) => {
-        client.query(ok, [req.params.typebordereau], (err, result) => {
-
-        })
-    })
     .get('/details/bordereau/:numeroBordereau', (req, res) => {
         client.query(details_bordereau, [req.params.numeroBordereau], (err, result) => {
             if (err) console.log(err)
@@ -1087,9 +1084,7 @@ router
     .post('/add/bordereau', (req, res) => {
         let body = []
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        console.log(body);
         const { nomassurance, nomgarant, typeSejour, limiteDateString, montanttotal, partAssurance, partPatient, factures } = body
-
         client.query(add_bordereau, [moment().format("DD-MM-YYYY"), moment().format("HH:MM"),
             limiteDateString, nomassurance, nomgarant, typeSejour, montanttotal, partAssurance, partPatient, "Envoie"],
             (err, result) => {
@@ -1100,6 +1095,31 @@ router
                         if (err) console.log(err);
                         else {
                             client.query(format('UPDATE gap.Factures SET statutfacture=%L WHERE numeroFacture IN (%L)', 'bordereau', factures), (err, result) => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    res.header(headers);
+                                    res.status(status);
+                                    res.json({ message: { type: "info", label: "" }, ...result });
+                                }
+                            });
+                        }
+                    })
+                }
+
+            })
+    })
+    .post('/delete/bordereau', (req, res) => {
+        try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        const { numerobordereau, factures } = body
+        client.query("DELETE FROM gap.Bordereaux WHERE numeroBordereau=$1", [numerobordereau],
+            (err, result) => {
+                if (err) console.log(err);
+                else {
+                    client.query("DELETE FROM gap.Bordereaux WHERE numeroBordereau=$1", [numerobordereau], (err, result) => {
+                        if (err) console.log(err);
+                        else {
+                            client.query(format('UPDATE gap.Factures SET statutfacture=%L WHERE numeroFacture IN (%L)', 'valide', factures), (err, result) => {
                                 if (err) {
                                     console.log(err);
                                 } else {
@@ -1155,7 +1175,6 @@ router
         })
     })
 
-
 //Actes
 router
     .get('/list/actes', (req, res) => {
@@ -1192,7 +1211,6 @@ router
             });
         }
     })
-
 
 router
     .get('/*', (req, res) => {

@@ -58,7 +58,7 @@ exports.search_assurance = {
 //1
 exports.search_bordereaux_for_all_assurance_garant_typesejour = {
     name: "search_bordereaux_for_all_assurance_garant_typesejour",
-    text: `SELECT * FROM 
+    text: `SELECT * FROM
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
