@@ -14,17 +14,18 @@ exports.add_sejour = {
         heureFinSejour,
         statusSejour,
         typeSejour,
+        specialitesejour,
         patientSejour,
         gestionnaire,
         organisme,
-        beneficiaire, 
+        beneficiaire,
         assurePrinc, 
-        matriculeAssure, 
+        matriculeAssure,
         numeroPEC, 
         taux,
         medecinsejour,
         etablissementSejour
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING numeroSejour`
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING numeroSejour`
 }
 
 //TODO  : FACTURES
@@ -52,7 +53,7 @@ exports.add_sejour_acte = {
 }
 exports.encaisser_patient_facture = {
     name: "encaisser_patient_facture",
-    text: `INSERT INTO gap.Paiements (modePaiement,sourcePaiement,montantPaiement,facturePaiement) VALUES($1,'Patient',$2,$3)`
+    text: `INSERT INTO gap.Paiements (modePaiement,sourcePaiement,montantPaiement,facturePaiement) VALUES($1,'Patient',$2,$3) RETURNING numeroPaiement`
 }
 
 exports.encaisser_assurance_facture = {

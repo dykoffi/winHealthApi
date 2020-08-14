@@ -11,6 +11,39 @@ SELECT concat(
         lpad(nextval('ipp_sequence')::TEXT, 4, '000'),
         'P'
     ) $$ LANGUAGE SQL STRICT;
+--Numero de paiement
+DROP FUNCTION get_numeroPaiement CASCADE;
+DROP SEQUENCE numeroPaiement_sequence;
+CREATE SEQUENCE numeroPaiement_sequence MINVALUE 1 MAXVALUE 9999 START 1;
+CREATE FUNCTION get_numeroPaiement() RETURNS TEXT AS $$
+SELECT concat(
+        rpad(current_date::TEXT, 4),
+        (
+            current_date + 1 - (concat(rpad(current_date::TEXT, 4), '-01-01'))::DATE
+        )::TEXT,
+        '-',
+        lpad(
+            nextval('numeroPaiement_sequence')::TEXT,
+            4,
+            '000'
+        ),
+        'P'
+    ) $$ LANGUAGE SQL STRICT;
+--Numero de paiement
+DROP FUNCTION get_numeroRecu CASCADE;
+DROP SEQUENCE numeroRecu_sequence;
+CREATE SEQUENCE numeroRecu_sequence MINVALUE 1 MAXVALUE 9999 START 1;
+CREATE FUNCTION get_numeroRecu() RETURNS TEXT AS $$
+SELECT concat(
+        rpad(current_date::TEXT, 4),
+        (
+            current_date + 1 - (concat(rpad(current_date::TEXT, 4), '-01-01'))::DATE
+        )::TEXT,
+        '-',
+        lpad(nextval('numeroRecu_sequence')::TEXT, 4, '000'),
+        'R'
+    ) $$ LANGUAGE SQL STRICT;
+--Numero de sejour
 DROP FUNCTION get_NumeroSejour CASCADE;
 DROP SEQUENCE NumeroSejour_sequence;
 CREATE SEQUENCE NumeroSejour_sequence MINVALUE 1 MAXVALUE 9999 START 1;
@@ -28,6 +61,7 @@ SELECT concat(
         ),
         'S'
     ) $$ LANGUAGE SQL STRICT;
+--Numero de facture
 DROP FUNCTION get_NumeroFacture CASCADE;
 DROP SEQUENCE NumeroFacture_sequence;
 CREATE SEQUENCE NumeroFacture_sequence MINVALUE 1 MAXVALUE 9999 START 1;
@@ -40,6 +74,7 @@ SELECT concat(
         ),
         'F'
     ) $$ LANGUAGE SQL STRICT;
+--Numero de bordereau
 DROP FUNCTION get_NumeroBordereau CASCADE;
 DROP SEQUENCE NumeroBordereau_sequence;
 CREATE SEQUENCE NumeroBordereau_sequence MINVALUE 1 MAXVALUE 9999 START 1;
@@ -52,6 +87,7 @@ SELECT concat(
         ),
         'B'
     ) $$ LANGUAGE SQL STRICT;
+-- Numero de compte
 DROP FUNCTION get_numeroCompte CASCADE;
 DROP SEQUENCE numeroCompte_sequence;
 CREATE SEQUENCE numeroCompte_sequence MINVALUE 1 MAXVALUE 9999 START 1;

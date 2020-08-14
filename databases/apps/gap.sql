@@ -35,14 +35,7 @@ CREATE TABLE gap.DossierAdministratif (
     contactPersonnesurePatient VARCHAR(100),
     qualitePersonnesurePatient VARCHAR(100)
 );
-CREATE TABLE gap.DossierMedical (
-    idDossier SERIAL PRIMARY KEY,
-    codeDossier VARCHAR(20) UNIQUE
-);
-CREATE TABLE gap.DossierParamedical (
-    idDossier SERIAL PRIMARY KEY,
-    codeDossier VARCHAR(20) UNIQUE
-);
+
 CREATE TABLE gap.Assurances (
     idAssurance SERIAL PRIMARY KEY,
     nomAssurance VARCHAR(50) NOT NULL,
@@ -61,6 +54,7 @@ CREATE TABLE gap.Sejours (
     dateFinSejour VARCHAR(50),
     heureDebutSejour VARCHAR(50),
     heureFinSejour VARCHAR(50),
+    specialiteSejour VARCHAR(50),
     typeSejour VARCHAR(50),
     -- consultation, Hospitalisation ou soins
     statusSejour VARCHAR(50),
@@ -107,14 +101,25 @@ CREATE TABLE gap.Factures (
 );
 CREATE TABLE gap.Paiements (
     idPaiement SERIAL PRIMARY KEY,
+    numeroPaiement VARCHAR(30) UNIQUE DEFAULT get_numeroPaiement(),
     modePaiement VARCHAR(100),
     montantPaiement VARCHAR(50) NOT NULL,
     sourcePaiement VARCHAR(30),
     facturePaiement VARCHAR(30) REFERENCES gap.Factures (numeroFacture) ON DELETE CASCADE
 );
+CREATE TABLE gap.Recus (
+    idRecu SERIAL PRIMARY KEY,
+    numeroRecu VARCHAR(30) UNIQUE DEFAULT get_numeroRecu(),
+    montantRecu INT,
+    dateRecu DATE,
+    patientRecu VARCHAR(100),
+    factureRecu VARCHAR(30) REFERENCES gap.Factures(numeroFacture),
+    paiementRecu VARCHAR(30) REFERENCES gap.Paiements(numeroPaiement),
+    sejourRecu VARCHAR(30) REFERENCES gap.Sejours(numeroSejour)
+);
 CREATE TABLE gap.Comptes (
     idCompte SERIAL PRIMARY KEY,
-    numeroCompte VARCHAR(20) UNIQUE DEFAULT get_numeroCompte(),
+    numeroCompte VARCHAR(30) UNIQUE DEFAULT get_numeroCompte(),
     montantCompte INT DEFAULT 0,
     dateCompte VARCHAR(20),
     heureCompte VARCHAR(10),

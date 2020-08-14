@@ -102,7 +102,6 @@ const {
 
 moment.locale('fr')
 const socket = io("http://192.168.16.192:8000")
-socket.emit('facture_nouvelle')
 //patient
 router
     .post('/add/patient', function (req, res) {
@@ -269,8 +268,10 @@ router
 router
     .post('/add/sejour/:patient', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
+        console.log(body);
         const {
             type,
+            specialite,
             actes,
             nomuser,
             prenomsuser,
@@ -295,6 +296,7 @@ router
             moment(finHeure).format("hh:mm"),
             "en attente",
             type,
+            specialite,
             patient,
             gestionnaire,
             organisme,
@@ -530,6 +532,7 @@ router
             else {
                 client.query(update_patient_facture, [req.params.numeroFacture], (err, result) => {
                     if (err) console.log(err)
+                    
                     else {
                         if (modepaiement === "Compte") {
                             console.log('paiement par compte')

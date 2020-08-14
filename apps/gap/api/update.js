@@ -1,7 +1,7 @@
 //TODO : FACTURES
 exports.update_patient_facture = {
     name: "update_patient_facture",
-    text: `UPDATE gap.Factures SET restePatientFacture=get_reste_patient((SELECT sejourFacture FROM gap.Factures WHERE numeroFacture=$1),$1) WHERE numeroFacture=$1`
+    text: `UPDATE gap.Factures SET restePatientFacture=get_reste_patient((SELECT sejourFacture FROM gap.Factures WHERE numeroFacture=$1),$1) WHERE numeroFacture=$1 RETURNING sejourFacture`
 }
 exports.update_assurance_facture = {
     name: "update_assurance_facture",

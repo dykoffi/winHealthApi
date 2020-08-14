@@ -29,10 +29,11 @@ exports.details_sejour = {
     WHERE 
         F.sejourFacture=S.numeroSejour AND
         S.etablissementSejour=E.idEtablissement AND
-        patientSejour=idDossier AND
+        S.patientSejour=D.idDossier AND
         S.numeroSejour=SA.numeroSejour AND
         A.codeActe=SA.codeActe AND
-        S.numeroSejour=$1  
+        S.numeroSejour=$1  AND
+        F.typeFacture='original'
     `
 }
 exports.list_actes = {
