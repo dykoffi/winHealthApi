@@ -113,9 +113,9 @@ CREATE TABLE gap.Recus (
     montantRecu INT,
     dateRecu DATE,
     patientRecu VARCHAR(100),
-    factureRecu VARCHAR(30) REFERENCES gap.Factures(numeroFacture),
-    paiementRecu VARCHAR(30) REFERENCES gap.Paiements(numeroPaiement),
-    sejourRecu VARCHAR(30) REFERENCES gap.Sejours(numeroSejour)
+    factureRecu VARCHAR(30) REFERENCES gap.Factures(numeroFacture) ON DELETE CASCADE ON UPDATE CASCADE,
+    paiementRecu VARCHAR(30) REFERENCES gap.Paiements(numeroPaiement) ON DELETE CASCADE ON UPDATE CASCADE,
+    sejourRecu VARCHAR(30) REFERENCES gap.Sejours(numeroSejour) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE gap.Comptes (
     idCompte SERIAL PRIMARY KEY,

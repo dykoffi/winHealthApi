@@ -9,6 +9,7 @@ const {
     add_patient,
     add_sejour,
     add_facture,
+    add_recu,
     add_sejour_acte,
     add_controle,
     add_compte,
@@ -18,6 +19,7 @@ const {
     add_facture_avoir,
     //autres
     encaisser_patient_facture,
+    encaisser_patient_facture_with_notransaction,
     encaisser_assurance_facture
 } = require("../apps/gap/api/add");
 const {
@@ -526,37 +528,52 @@ router
     })
     .post('/encaisser_patient/facture/:numeroFacture', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
-        const { modepaiement, montantrecu, compte } = body
-        client.query(encaisser_patient_facture, [modepaiement, montantrecu, req.params.numeroFacture], (err, result) => {
-            if (err) console.log(err)
-            else {
-                client.query(update_patient_facture, [req.params.numeroFacture], (err, result) => {
-                    if (err) console.log(err)
-                    
-                    else {
-                        if (modepaiement === "Compte") {
-                            console.log('paiement par compte')
-                            client.query(add_transaction, [moment().format('DD-MM-YYYY'), moment().format('hh:ss'), '-' + montantrecu, 'Retrait', 'Paiement facture', compte], (err, result) => {
-                                if (err) {
-                                    console.log(err)
-                                } else {
-                                    client.query(update_compte, [compte], (err, result) => {
-                                        err && console.log(err)
+        const { numeroTransaction } = body
+        const { modepaiement, montantrecu, compte, patient: patientRecu } = body
+        client.query(
+            numeroTransaction.trim() === '' ? encaisser_patient_facture : encaisser_patient_facture_with_notransaction,
+            numeroTransaction.trim() === '' ? [modepaiement, montantrecu, req.params.numeroFacture] : [modepaiement, montantrecu, req.params.numeroFacture, numeroTransaction],
+            (err, result) => {
+                if (err) console.log(err)
+                else {
+                    console.log(result);
+                    const paiementRecu = result.rows[0].numeropaiement
+                    client.query(update_patient_facture, [req.params.numeroFacture], (err, result) => {
+                        const sejourRecu = result.rows[0].sejourfacture
+                        if (err) console.log(err)
+                        client.query(add_recu, [
+                            montantrecu,
+                            moment().format('YYYY-MM-DD'),
+                            patientRecu,
+                            req.params.numeroFacture,
+                            paiementRecu,
+                            sejourRecu], (err, result) => {
+                                if (err) console.log(err)
+                                else {
+                                    if (modepaiement === "Compte") {
+                                        console.log('paiement par compte')
+                                        client.query(add_transaction, [moment().format('DD-MM-YYYY'), moment().format('hh:ss'), '-' + montantrecu, 'Retrait', 'Paiement facture', compte], (err, result) => {
+                                            if (err) {
+                                                console.log(err)
+                                            } else {
+                                                client.query(update_compte, [compte], (err, result) => {
+                                                    err && console.log(err)
+                                                    res.header(headers);
+                                                    res.status(status);
+                                                    res.json({ message: { type: "info", label: " " }, ...result });
+                                                });
+                                            }
+                                        });
+                                    } else {
                                         res.header(headers);
                                         res.status(status);
-                                        res.json({ message: { type: "info", label: " " }, ...result });
-                                    });
+                                        res.json({ message: { type: "info", label: "Facture encaissée" }, ...result });
+                                    }
                                 }
-                            });
-                        } else {
-                            res.header(headers);
-                            res.status(status);
-                            res.json({ message: { type: "info", label: "Facture encaissée" }, ...result });
-                        }
-                    }
-                })
-            }
-        });
+                            })
+                    })
+                }
+            });
     })
     .post('/add/facture_avoir/:numeroFacture', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
@@ -1067,17 +1084,19 @@ router
         });
 
     })
-    .post('/update/sejour/:numeroSejour', (req, res) => {
-        let body = []
+    .post('/update/sejour/:numeroSejour/:numeroFacture', (req, res) => {
         try { body = JSON.parse(Object.keys(req.body)[0]) } catch (error) { body = req.body }
         const { gestionnaire, organisme, beneficiaire, matriculeAssure, assurePrinc, numeroPEC, taux } = body
         client.query(update_sejour_assurance, [gestionnaire, organisme, beneficiaire, matriculeAssure, assurePrinc, numeroPEC, taux, req.params.numeroSejour], (err, result) => {
             if (err) console.log(err);
             else {
-                client.query(update_facture, [req.params.numeroSejour], (err, result) => {
-                    res.header(headers);
-                    res.status(status);
-                    res.json({ message: { type: "info", label: "" }, ...result });
+                client.query(update_facture, [req.params.numeroSejour, req.params.numeroFacture], (err, result) => {
+                    if (err) console.log(err);
+                    else {
+                        res.header(headers);
+                        res.status(status);
+                        res.json({ message: { type: "info", label: "" }, ...result });
+                    }
                 })
             }
 

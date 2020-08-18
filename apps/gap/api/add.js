@@ -51,9 +51,27 @@ exports.add_sejour_acte = {
         codeActe
     ) VALUES ($1,$2)`
 }
+
+
+exports.add_recu = {
+    name: 'add_recu',
+    text: `INSERT INTO gap.Recus (
+            montantRecu,
+            dateRecu,
+            patientRecu,
+            factureRecu,
+            paiementRecu,
+            sejourRecu
+        ) VALUES($1,$2,$3,$4,$5,$6)`
+}
 exports.encaisser_patient_facture = {
     name: "encaisser_patient_facture",
     text: `INSERT INTO gap.Paiements (modePaiement,sourcePaiement,montantPaiement,facturePaiement) VALUES($1,'Patient',$2,$3) RETURNING numeroPaiement`
+}
+
+exports.encaisser_patient_facture_with_notransaction = {
+    name: "encaisser_patient_facture_with_notransaction",
+    text: `INSERT INTO gap.Paiements (modePaiement,sourcePaiement,montantPaiement,facturePaiement,numeropaiement) VALUES($1,'Patient',$2,$3,$4) RETURNING numeroPaiement`
 }
 
 exports.encaisser_assurance_facture = {

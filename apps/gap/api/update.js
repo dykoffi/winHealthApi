@@ -91,9 +91,9 @@ exports.update_facture = {
     name: "update_facture",
     text: `UPDATE gap.Factures SET
         partAssuranceFacture=get_part_assurance($1),
-        resteAssuranceFacture=get_reste_assurance($1),
+        resteAssuranceFacture=get_reste_assurance($1,$2),
         partPatientFacture=get_part_patient($1),
-        restePatientFacture=get_reste_patient($1)
+        restePatientFacture=get_reste_patient($1,$2)
         WHERE sejourFacture=$1
     `
 }
