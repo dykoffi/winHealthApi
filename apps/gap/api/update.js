@@ -8,6 +8,11 @@ exports.update_assurance_facture = {
     text: `UPDATE gap.Factures SET resteAssuranceFacture=get_reste_assurance((SELECT sejourFacture FROM gap.Factures WHERE numeroFacture=$1),$1) WHERE numeroFacture=$1`
 }
 
+exports.update_reste_encaissement = {
+    name: "update_reste_encaissement",
+    text: `UPDATE gap.Encaissements SET resteEncaissement=resteEncaissement-$2::INT WHERE numeroEncaissement=$1`
+}
+
 //TODO : COMPTE
 exports.update_compte = {
     name: 'update_compte',
@@ -55,7 +60,7 @@ exports.update_patient = {
     nomPersonnesurePatient =$22,
     prenomsPersonnesurePatient =$23,
     contactPersonnesurePatient =$24,
-    qualitePersonnesurePatient =$25 WHERE ipppatient=$26 RETURNING idDossier`
+    qualitePersonnesurePatient =$25 WHERE ipppatient=$26 RETURNING idDossier, *`
 }
 
 exports.retrait_facture_recue = {
@@ -106,6 +111,15 @@ exports.update_statut_bordereau = {
             commentaireBordereau=$2
         WHERE numeroBordereau=$3
         `
+}
+
+exports.update_montant_bordereau = {
+    name: 'update_montant_bordereau',
+    text: `UPDATE gap.Bordereaux SET 
+        montanttotal=get_montant_total_bordereau($1), 
+        partAssurance=get_part_assurance_bordereau($1), 
+        partPatient=get_part_patient_bordereau($1) 
+    WHERE numeroBordereau=$1`
 }
 
 exports.report_facture = {

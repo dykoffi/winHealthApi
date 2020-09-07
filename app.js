@@ -6,9 +6,7 @@ const path = require('path')
 
 //definition des routes des applications
 const connexion_router = require('./routes/connexion')
-const admin_router = require('./routes/admin')
 const gap_router = require('./routes/gap')
-const dpi_router = require('./routes/dpi')
 // const views_router = require('./routes/views')
 
 //definition de l'application
@@ -26,9 +24,7 @@ app.use(cookieparser())
 
 //utilisation des routes des applications
 app.use('/connexion', connexion_router)
-app.use('/admin', admin_router)
 app.use('/gap', gap_router)
-app.use('/dpi', dpi_router)
 // app.use('/views', views_router)
 
 app.use(function (req, res, next) { next(createError(404)); }); // catch 404 and forward to error handler

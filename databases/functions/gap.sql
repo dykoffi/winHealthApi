@@ -27,7 +27,7 @@ SELECT concat(
             4,
             '000'
         ),
-        'P'
+        'Re'
     ) $$ LANGUAGE SQL STRICT;
 --Numero de paiement
 DROP FUNCTION get_numeroRecu CASCADE;
@@ -129,7 +129,10 @@ CREATE OR REPLACE FUNCTION get_part_patient(numeroSejour TEXT) RETURNS NUMERIC(1
 SELECT (get_total_facture($1) - get_part_assurance($1))::NUMERIC(15, 2) $$ LANGUAGE SQL STRICT;
 -- AVOIR LES PAIEMENT D'UN PATIENT DONNÉ
 CREATE OR REPLACE FUNCTION get_paiement_patient(numeroFacture TEXT) RETURNS INT AS $$
-SELECT SUM(montantPaiement::INT)::INT
+SELECT CASE
+        WHEN SUM(montantPaiement::INT)::INT isnull THEN 0
+        WHEN SUM(montantPaiement::INT)::INT is not null THEN SUM(montantPaiement::INT)::INT
+    END AS somme
 FROM gap.paiements,
     gap.Factures
 WHERE numeroFacture = facturePaiement
@@ -137,7 +140,10 @@ WHERE numeroFacture = facturePaiement
     AND numeroFacture = $1 $$ LANGUAGE SQL STRICT;
 -- AVOIR LES PAIEMENT D'UNE ASSURANCE DONNÉE
 CREATE OR REPLACE FUNCTION get_paiement_assurance(numeroFacture TEXT) RETURNS INT AS $$
-SELECT SUM(montantPaiement::INT)::INT
+SELECT CASE
+        WHEN SUM(montantPaiement::INT)::INT isnull THEN 0
+        WHEN SUM(montantPaiement::INT)::INT is not null THEN SUM(montantPaiement::INT)::INT
+    END AS somme
 FROM gap.paiements,
     gap.Factures
 WHERE numeroFacture = facturePaiement
@@ -163,6 +169,10 @@ CREATE OR REPLACE FUNCTION get_date_sejour(numeroSejour TEXT) RETURNS DATE AS $$
 SELECT dateDebutSejour::DATE
 FROM gap.Sejours
 WHERE numerosejour = $1 $$ LANGUAGE SQL STRICT;
+CREATE OR REPLACE FUNCTION get_nombre_factures(numeroBordereau TEXT) RETURNS INT AS $$
+SELECT COUNT(*)::INT
+FROM gap.Bordereau_factures
+WHERE numeroBordereau = $1 $$ LANGUAGE SQL STRICT;
 CREATE OR REPLACE FUNCTION get_delai_controle (numeroSejour TEXT) RETURNS INT AS $$
 SELECT (current_date - get_date_sejour($1));
 $$ LANGUAGE SQL STRICT;
@@ -178,3 +188,28 @@ CREATE OR REPLACE FUNCTION get_nbfacture_bordereau (numeroBordereau TEXT) RETURN
 SELECT COUNT(*)::INT
 FROM gap.Bordereau_factures
 WHERE numeroBordereau = $1 $$ LANGUAGE SQL STRICT;
+CREATE OR REPLACE FUNCTION get_montant_total_bordereau(numeroBordereau TEXT) RETURNS INT AS $$
+SELECT SUM(montanttotalfacture)::INT
+FROM gap.Bordereau_factures B,
+    gap.factures F
+WHERE F.numeroFacture = B.numerofacture
+    AND typeFacture = 'original'
+    AND numeroBordereau = $1 $$ LANGUAGE SQL STRICT;
+CREATE OR REPLACE FUNCTION get_part_patient_bordereau(numeroBordereau TEXT) RETURNS INT AS $$
+SELECT SUM(partpatientfacture)::INT
+FROM gap.Bordereau_factures B,
+    gap.factures F
+WHERE F.numeroFacture = B.numerofacture
+    AND typeFacture = 'original'
+    AND numeroBordereau = $1 $$ LANGUAGE SQL STRICT;
+CREATE OR REPLACE FUNCTION get_part_assurance_bordereau(numeroBordereau TEXT) RETURNS INT AS $$
+SELECT SUM(partassurancefacture)::INT
+FROM gap.Bordereau_factures B,
+    gap.factures F
+WHERE F.numeroFacture = B.numerofacture
+    AND typeFacture = 'original'
+    AND numeroBordereau = $1 $$ LANGUAGE SQL STRICT;
+CREATE OR REPLACE FUNCTION get_montant_davoir(numerFacture TEXT) RETURNS INT AS $$
+SELECT montanttotalfacture
+FROM gap.Factures
+WHERE parentfacture = $1 $$ LANGUAGE SQL STRICT;

@@ -1,10 +1,13 @@
-CREATE TABLE gap.Recus (
-    idRecu SERIAL PRIMARY KEY,
-    numeroRecu VARCHAR(30) UNIQUE DEFAULT get_numeroRecu(),
-    montantRecu INT,
-    dateRecu DATE,
-    patientRecu VARCHAR(100),
-    factureRecu VARCHAR(20) REFERENCES gap.Factures(numeroFacture),
-    paiementRecu VARCHAR(20) REFERENCES gap.Paiement(numeroPaiement),
-    sejourRecu VARCHAR(20) REFERENCES gap.Sejours(numeroSejour),
+DROP TABLE gap.Encaissements;
+CREATE TABLE gap.Encaissements (
+    id SERIAL PRIMARY KEY,
+    numeroEncaissement VARCHAR(30) UNIQUE DEFAULT get_numeroPaiement(),
+    dateEncaissement DATE DEFAULT NOW()::DATE,
+    heureEncaissement TIME DEFAULT NOW()::TIME,
+    modePaiementEncaissement VARCHAR(100),
+    commentaireEncaissement TEXT,
+    montantEncaissement INT,
+    resteEncaissement INT,
+    assuranceEncaissement VARCHAR(200),
+    recepteurEncaissement VARCHAR(200)
 )

@@ -138,16 +138,17 @@ exports.verify_compte = {
 exports.details_facture = {
     name: "details_facture",
     text: `
-    SELECT * FROM 
-        gap.Factures, 
-        gap.Sejours,
-        gap.DossierAdministratif LEFT OUTER JOIN  gap.Comptes ON ipppatient=patientcompte
+    SELECT *,get_montant_davoir(numeroFacture) montantAvoir FROM 
+        gap.Factures Fa,
+        gap.Sejours S,
+        gap.DossierAdministratif D LEFT OUTER JOIN  
+        gap.Comptes C ON ipppatient=patientcompte 
     WHERE
         patientSejour=idDossier AND
-        sejourFacture=numeroSejour AND
-        Sejours.statusSejour='en attente' AND
-        numeroFacture=$1 AND
-        typeFacture='original'`
+        Fa.sejourFacture=numeroSejour AND
+        S.statusSejour='en attente' AND
+        Fa.numeroFacture=$1 AND
+        Fa.typeFacture='original'`
 }
 
 exports.imprimer_facture = {
@@ -242,17 +243,17 @@ exports.list_factures_assurances = {
 exports.list_factures_for_all_assurance_garant_typesejour = {
     name: "list_factures_for_all_assurance_garant_typesejour",
     text: `
-    SELECT * FROM 
-        gap.Factures, 
-        gap.Sejours, 
-        gap.Assurances, 
-        gap.DossierAdministratif
+    SELECT *, F.numeroFacture nbfacture FROM
+    gap.Sejours,
+    gap.Assurances,
+    gap.DossierAdministratif,
+    gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
     WHERE
-        Factures.sejourFacture = Sejours.numeroSejour AND
+        F.sejourFacture = Sejours.numeroSejour AND
         Sejours.gestionnaire = Assurances.nomAssurance AND
         DossierAdministratif.idDossier = Sejours.patientSejour AND
-        Factures.dateFacture::date >= $1::date AND 
-        Factures.dateFacture::date <= $2::date AND
+        F.dateFacture::date >= $1::date AND 
+        F.dateFacture::date <= $2::date AND
         typeFacture='original'
         `
 }
@@ -422,4 +423,25 @@ exports.list_assurances = {
 exports.details_assurance = {
     name: "details_assurance",
     text: `SELECT * FROM gap.Assurances WHERE idAssurance=$1`
+}
+
+exports.list_encaissements = {
+    name: 'list_encaissements',
+    text: 'SELECT * FROM gap.Encaissements'
+}
+
+exports.details_encaissement = {
+    name: "details_encaissement",
+    text: `SELECT * FROM gap.Encaissements WHERE numeroEncaissement = $1`
+}
+
+//LOGS
+exports.list_gap_logs = {
+    name: 'list_gap_logs',
+    text: `SELECT * FROM admin.Logs WHERE app = 'COAP001'`
+}
+
+exports.list_gap_logs_users = {
+    name: 'list_gap_logs_users',
+    text: `SELECT DISTINCT(auteurLog) FROM admin.Logs WHERE app = 'COAP001'`
 }

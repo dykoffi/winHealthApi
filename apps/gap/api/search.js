@@ -34,6 +34,7 @@ exports.search_facture = {
     WHERE 
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
+        typefacture = 'original' AND
         numeroFacture  ~* $1`
 }
 
@@ -58,7 +59,7 @@ exports.search_assurance = {
 //1
 exports.search_bordereaux_for_all_assurance_garant_typesejour = {
     name: "search_bordereaux_for_all_assurance_garant_typesejour",
-    text: `SELECT * FROM
+    text: `SELECT *, get_nombre_factures(numerobordereau) nbfactures FROM
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
@@ -69,7 +70,7 @@ exports.search_bordereaux_for_all_assurance_garant_typesejour = {
 //2
 exports.search_bordereaux_for_all_assurance_garant = {
     name: "search_bordereaux_for_all_assurance_garant",
-    text: `SELECT * FROM 
+    text: `SELECT *, get_nombre_factures(numerobordereau) nbfactures FROM 
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
@@ -80,7 +81,7 @@ exports.search_bordereaux_for_all_assurance_garant = {
 //3
 exports.search_bordereaux_for_all_assurance_typesejour = {
     name: "search_bordereaux_for_all_assurance_typesejour",
-    text: `SELECT * FROM 
+    text: `SELECT *, get_nombre_factures(numerobordereau) nbfactures FROM 
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
@@ -92,7 +93,7 @@ exports.search_bordereaux_for_all_assurance_typesejour = {
 //4
 exports.search_bordereaux_for_all_assurance = {
     name: "search_bordereaux_for_all_assurance",
-    text: `SELECT * FROM 
+    text: `SELECT *, get_nombre_factures(numerobordereau) nbfactures FROM 
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
@@ -105,7 +106,7 @@ exports.search_bordereaux_for_all_assurance = {
 //5
 exports.search_bordereaux_for_all_garant_typesejour = {
     name: "search_bordereaux_for_all_garant_typesejour",
-    text: `SELECT * FROM 
+    text: `SELECT *, get_nombre_factures(numerobordereau) nbfactures FROM 
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
@@ -118,7 +119,7 @@ exports.search_bordereaux_for_all_garant_typesejour = {
 
 exports.search_bordereaux_for_all_garant = {
     name: "search_bordereaux_for_all_garant",
-    text: `SELECT * FROM 
+    text: `SELECT *, get_nombre_factures(numerobordereau) nbfactures FROM 
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
@@ -131,7 +132,7 @@ exports.search_bordereaux_for_all_garant = {
 //7
 exports.search_bordereaux_for_all_typesejour = {
     name: "search_bordereaux_for_all_typesejour",
-    text: `SELECT * FROM 
+    text: `SELECT *, get_nombre_factures(numerobordereau) nbfactures FROM 
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 
@@ -144,7 +145,7 @@ exports.search_bordereaux_for_all_typesejour = {
 //8
 exports.search_bordereaux_by_assurance_garant_typesejour = {
     name: "search_bordereaux_by_assurance_garant_typesejour",
-    text: `SELECT * FROM 
+    text: `SELECT *, get_nombre_factures(numerobordereau) nbfactures FROM 
         gap.bordereaux
     WHERE
         Bordereaux.dateCreationBordereau::date >= $1::date AND 

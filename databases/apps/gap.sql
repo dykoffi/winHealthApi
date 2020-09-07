@@ -35,7 +35,6 @@ CREATE TABLE gap.DossierAdministratif (
     contactPersonnesurePatient VARCHAR(100),
     qualitePersonnesurePatient VARCHAR(100)
 );
-
 CREATE TABLE gap.Assurances (
     idAssurance SERIAL PRIMARY KEY,
     nomAssurance VARCHAR(50) NOT NULL,
@@ -164,3 +163,15 @@ CREATE TABLE gap.Bordereau_factures (
     numeroFacture VARCHAR(100) REFERENCES gap.Factures (numerofacture) ON DELETE CASCADE ON UPDATE CASCADE,
     numeroBordereau VARCHAR(100) REFERENCES gap.Bordereaux (numeroBordereau) ON DELETE CASCADE ON UPDATE CASCADE
 );
+CREATE TABLE gap.Encaissements (
+    id SERIAL PRIMARY KEY,
+    numeroEncaissement VARCHAR(30) UNIQUE DEFAULT get_numeroPaiement(),
+    dateEncaissement DATE DEFAULT NOW()::DATE,
+    heureEncaissement TIME DEFAULT NOW()::TIME,
+    modePaiementEncaissement VARCHAR(100),
+    commentaireEncaissement TEXT,
+    montantEncaissement INT,
+    resteEncaissement INT,
+    assuranceEncaissement VARCHAR(200),
+    recepteurEncaissement VARCHAR(200)
+)

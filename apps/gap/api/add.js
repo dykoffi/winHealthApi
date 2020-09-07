@@ -1,7 +1,7 @@
 //TODO  : PATIENTS
 exports.add_patient = {
     name: "add_patient",
-    text: "INSERT INTO gap.DossierAdministratif (nomPatient,prenomsPatient,civilitePatient,sexePatient,dateNaissancePatient,lieuNaissancePatient,nationalitePatient,professionPatient,situationMatrimonialePatient,religionPatient,habitationPatient,contactPatient, nomPerePatient,prenomsPerePatient,contactPerePatient,nomMerePatient,prenomsMerePatient,contactMerePatient,nomTuteurPatient,prenomsTuteurPatient,contactTuteurPatient,nomPersonnesurePatient,prenomsPersonnesurePatient,contactPersonnesurePatient,qualitePersonnesurePatient) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25) RETURNING idDossier"
+    text: "INSERT INTO gap.DossierAdministratif (nomPatient,prenomsPatient,civilitePatient,sexePatient,dateNaissancePatient,lieuNaissancePatient,nationalitePatient,professionPatient,situationMatrimonialePatient,religionPatient,habitationPatient,contactPatient, nomPerePatient,prenomsPerePatient,contactPerePatient,nomMerePatient,prenomsMerePatient,contactMerePatient,nomTuteurPatient,prenomsTuteurPatient,contactTuteurPatient,nomPersonnesurePatient,prenomsPersonnesurePatient,contactPersonnesurePatient,qualitePersonnesurePatient) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25) RETURNING idDossier, *"
 }
 
 //TODO  : SEJOURS
@@ -25,7 +25,7 @@ exports.add_sejour = {
         taux,
         medecinsejour,
         etablissementSejour
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING numeroSejour`
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING numeroSejour, *`
 }
 
 //TODO  : FACTURES
@@ -42,7 +42,7 @@ exports.add_facture = {
         restePatientFacture,
         sejourFacture,
         typeFacture
-        ) VALUES ($1,$2,$3,get_total_facture($4),get_part_assurance($4),get_part_assurance($4),get_part_patient($4),get_part_patient($4),$4,'original')`
+        ) VALUES ($1,$2,$3,get_total_facture($4),get_part_assurance($4),get_part_assurance($4),get_part_patient($4),get_part_patient($4),$4,'original') RETURNING *`
 }
 exports.add_sejour_acte = {
     name: `add_sejour_acte`,
@@ -99,7 +99,7 @@ exports.add_compte = {
         dateCompte,
         heureCompte,
         patientCompte
-    ) VALUES ($1,$2,$3,$4)`
+    ) VALUES ($1,$2,$3,$4) RETURNING *`
 }
 exports.add_transaction = {
     name: "add_transaction",
@@ -125,7 +125,7 @@ exports.add_assurance = {
         mailAssurance,
         localAssurance,
         siteAssurance
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`
 }
 
 //BORDEREAUX
@@ -144,4 +144,11 @@ exports.add_bordereau = {
         partPatient,
         statutBordereau
     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING numeroBordereau`
+}
+
+//ENCAISSEMENT
+
+exports.add_encaissement = {
+    name: 'add_encaissement',
+    text: `INSERT INTO gap.Encaissements (modePaiementEncaissement,montantencaissement,resteEncaissement,assuranceEncaissement,recepteurEncaissement,commentaireEncaissement) VALUES ($1,$2,$2,$3,$4,$5) RETURNING *`
 }
