@@ -122,7 +122,7 @@ CREATE TABLE gap.Comptes (
     montantCompte INT DEFAULT 0,
     dateCompte VARCHAR(20),
     heureCompte VARCHAR(10),
-    patientCompte VARCHAR(20) REFERENCES gap.DossierAdministratif (ippPatient) ON DELETE CASCADE
+    patientCompte VARCHAR(20) REFERENCES gap.DossierAdministratif (ippPatient) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE gap.Transactions (
     idTransaction SERIAL PRIMARY KEY,

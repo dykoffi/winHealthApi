@@ -1,7 +1,7 @@
 //TODO : PATIENTS
 exports.list_patient = {
     name: "list_patient",
-    text: "SELECT idDossier, ippPatient, nomPatient, prenomsPatient, sexePatient, dateNaissancePatient, lieuNaissancePatient, nationalitePatient,habitationPatient, contactPatient, *  FROM gap.DossierAdministratif ORDER BY idDossier DESC LIMIT 20"
+    text: "SELECT idDossier, ippPatient, nomPatient, prenomsPatient, sexePatient, dateNaissancePatient, lieuNaissancePatient, nationalitePatient,habitationPatient, contactPatient, *  FROM gap.DossierAdministratif ORDER BY nomPatient, prenomsPatient"
 }
 exports.details_patient = {
     name: "details_patient",
@@ -25,7 +25,7 @@ exports.details_sejour = {
     general.Actes A, 
     gap.Sejours S, 
     general.Etablissement E,
-    gap.DossierAdministratif D
+    gap.DossierAdministratif D LEFT JOIN gap.Comptes ON patientCompte=ippPatient
     WHERE 
         F.sejourFacture=S.numeroSejour AND
         S.etablissementSejour=E.idEtablissement AND
@@ -155,11 +155,12 @@ exports.imprimer_facture = {
     name: "imprimer_facture",
     text: `
     SELECT * FROM 
-        gap.Factures, 
+        gap.Factures,
         general.Actes, 
         gap.Sejours,
         general.Etablissement,
         gap.DossierAdministratif
+        LEFT JOIN gap.Comptes ON patientCompte=ippPatient
     WHERE 
         sejourFacture=numeroSejour AND
         etablissementSejour=idEtablissement AND
@@ -213,7 +214,7 @@ exports.list_comptes = {
         gap.Comptes, gap.DossierAdministratif
     WHERE 
         Comptes.patientCompte=DossierAdministratif.ippPatient 
-    ORDER BY idCompte`
+    ORDER BY nomPatient, prenomsPatient, idCompte`
 }
 exports.details_compte = {
     name: 'details_comptes',
@@ -244,10 +245,10 @@ exports.list_factures_for_all_assurance_garant_typesejour = {
     name: "list_factures_for_all_assurance_garant_typesejour",
     text: `
     SELECT *, F.numeroFacture nbfacture FROM
-    gap.Sejours,
-    gap.Assurances,
-    gap.DossierAdministratif,
-    gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
+        gap.Sejours,
+        gap.Assurances,
+        gap.DossierAdministratif,
+        gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
     WHERE
         F.sejourFacture = Sejours.numeroSejour AND
         Sejours.gestionnaire = Assurances.nomAssurance AND
@@ -262,16 +263,16 @@ exports.list_factures_for_all_assurance_garant_typesejour = {
 exports.list_factures_for_all_assurance_garant = {
     name: "list_factures_for_all_assurance_garant",
     text: `
-    SELECT * FROM 
-        gap.Factures, 
-        gap.Sejours, 
-        gap.Assurances, 
-        gap.DossierAdministratif
+     SELECT *, F.numeroFacture nbfacture FROM
+        gap.Sejours,
+        gap.Assurances,
+        gap.DossierAdministratif,
+        gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
     WHERE
-        Factures.sejourFacture = Sejours.numeroSejour AND
+        F.sejourFacture = Sejours.numeroSejour AND
         Sejours.gestionnaire = Assurances.nomAssurance AND
         DossierAdministratif.idDossier = Sejours.patientSejour AND
-        Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
+        F.dateFacture::date >= $1::date AND F.dateFacture::date <= $2::date AND
         Sejours.typesejour = $3 AND
         typeFacture='original'
         `
@@ -279,12 +280,16 @@ exports.list_factures_for_all_assurance_garant = {
 //3
 exports.list_factures_for_all_assurance_typesejour = {
     name: "list_factures_for_all_assurance_typesejour",
-    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
+    text: ` SELECT *, F.numeroFacture nbfacture FROM
+        gap.Sejours,
+        gap.Assurances,
+        gap.DossierAdministratif,
+        gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
             WHERE
-                Factures.sejourFacture = Sejours.numeroSejour AND
+                F.sejourFacture = Sejours.numeroSejour AND
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
-                Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
+                F.dateFacture::date >= $1::date AND F.dateFacture::date <= $2::date AND
                 Sejours.organisme = $3 AND
                 typeFacture='original'
         `
@@ -293,12 +298,16 @@ exports.list_factures_for_all_assurance_typesejour = {
 //4
 exports.list_factures_for_all_assurance = {
     name: "list_factures_for_all_assurance",
-    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
+    text: ` SELECT *, F.numeroFacture nbfacture FROM
+        gap.Sejours,
+        gap.Assurances,
+        gap.DossierAdministratif,
+        gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
             WHERE
-                Factures.sejourFacture = Sejours.numeroSejour AND
+                F.sejourFacture = Sejours.numeroSejour AND
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
-                Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
+                F.dateFacture::date >= $1::date AND F.dateFacture::date <= $2::date AND
                 Sejours.organisme = $3 AND
                 Sejours.typeSejour = $4 AND
                 typeFacture='original'
@@ -308,12 +317,16 @@ exports.list_factures_for_all_assurance = {
 //5
 exports.list_factures_for_all_garant_typesejour = {
     name: "list_factures_for_all_garant_typesejour",
-    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
+    text: ` SELECT *, F.numeroFacture nbfacture FROM
+        gap.Sejours,
+        gap.Assurances,
+        gap.DossierAdministratif,
+        gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
             WHERE
-                Factures.sejourFacture = Sejours.numeroSejour AND
+                F.sejourFacture = Sejours.numeroSejour AND
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
-                Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
+                F.dateFacture::date >= $1::date AND F.dateFacture::date <= $2::date AND
                 Sejours.gestionnaire = $3 AND
                 typeFacture='original'
         `
@@ -323,12 +336,16 @@ exports.list_factures_for_all_garant_typesejour = {
 
 exports.list_factures_for_all_garant = {
     name: "list_factures_for_all_garant",
-    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
+    text: ` SELECT *, F.numeroFacture nbfacture FROM
+        gap.Sejours,
+        gap.Assurances,
+        gap.DossierAdministratif,
+        gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
             WHERE
-                Factures.sejourFacture = Sejours.numeroSejour AND
+                F.sejourFacture = Sejours.numeroSejour AND
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
-                Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
+                F.dateFacture::date >= $1::date AND F.dateFacture::date <= $2::date AND
                 Sejours.gestionnaire = $3 AND
                 Sejours.typeSejour = $4 AND
                 typeFacture='original'
@@ -338,13 +355,17 @@ exports.list_factures_for_all_garant = {
 //7
 exports.list_factures_for_all_typesejour = {
     name: "list_factures_for_all_typesejour",
-    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
+    text: ` SELECT *, F.numeroFacture nbfacture FROM
+        gap.Sejours,
+        gap.Assurances,
+        gap.DossierAdministratif,
+        gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
             WHERE
-                Factures.sejourFacture = Sejours.numeroSejour AND
+                F.sejourFacture = Sejours.numeroSejour AND
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
-                Factures.dateFacture::date >= $1::date AND 
-                Factures.dateFacture::date <= $2::date AND
+                F.dateFacture::date >= $1::date AND 
+                F.dateFacture::date <= $2::date AND
                 Sejours.gestionnaire = $3 AND
                 Sejours.organisme = $4 AND
                 typeFacture='original'
@@ -354,12 +375,16 @@ exports.list_factures_for_all_typesejour = {
 //8
 exports.list_factures_by_assurance_garant_typesejour = {
     name: "list_factures_by_assurance_garant_typesejour",
-    text: `SELECT * FROM gap.Factures, gap.Sejours, gap.Assurances, gap.DossierAdministratif
+    text: ` SELECT *, F.numeroFacture nbfacture FROM
+        gap.Sejours,
+        gap.Assurances,
+        gap.DossierAdministratif,
+        gap.Factures F LEFT OUTER JOIN gap.Bordereau_Factures B ON F.numeroFacture=B.numeroFacture
             WHERE
-                Factures.sejourFacture = Sejours.numeroSejour AND
+                F.sejourFacture = Sejours.numeroSejour AND
                 Sejours.gestionnaire = Assurances.nomAssurance AND
                 DossierAdministratif.idDossier = Sejours.patientSejour AND
-                Factures.dateFacture::date >= $1::date AND Factures.dateFacture::date <= $2::date AND
+                F.dateFacture::date >= $1::date AND F.dateFacture::date <= $2::date AND
                 Sejours.gestionnaire = $3 AND
                 Sejours.organisme = $4 AND
                 Sejours.typeSejour = $5 AND
@@ -418,7 +443,7 @@ exports.details_bordereau = {
 //TODO : ASSURANCES
 exports.list_assurances = {
     name: "list_assurances",
-    text: `SELECT * FROM gap.Assurances`
+    text: `SELECT * FROM gap.Assurances ORDER BY nomAssurance`
 }
 exports.details_assurance = {
     name: "details_assurance",

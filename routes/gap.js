@@ -117,6 +117,7 @@ function getIP() {
 moment.locale('fr')
 const host = getIP()
 const socket = io(`http://${host}:8000`)
+
 //patient
 router
     .post('/add/patient', function (req, res) {
@@ -458,6 +459,7 @@ router
             }
         });
     })
+
 //Comptes
 router
     .get('/list/patients_no_compte', (req, res) => {

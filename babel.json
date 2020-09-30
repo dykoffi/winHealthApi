@@ -19,5 +19,13 @@
       "statistics": {},
       "id": "1f449416-fc9e-4355-b776-09aaae71c0a2"
     }
+  ],
+  "backups": [
+    {
+      "timestamp": 1600549850729,
+      "localPath": "/home/dy/Documents/BabelWorkspaceBackups/babel-2020-09-19.backup.zip",
+      "cloudProviders": [],
+      "id": "b638f45f-a506-460b-899c-cd9d4227b124"
+    }
   ]
 }
