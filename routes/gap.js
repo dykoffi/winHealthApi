@@ -37,6 +37,7 @@ const {
     list_factures_attentes,
     list_factures_patient,
     list_factures_payees_patient,
+    list_factures_payees,
     list_factures_impayees_patient,
     list_patient_no_compte,
     list_assurances,
@@ -117,7 +118,6 @@ function getIP() {
 moment.locale('fr')
 const host = getIP()
 const socket = io(`http://${host}:8000`)
-
 //patient
 router
     .post('/add/patient', function (req, res) {
@@ -588,6 +588,15 @@ router
             res.json({ message: { type: "info", label: " " }, ...result });
         });
     })
+    .get('/list/factures_payees', (req, res) => {
+        client.query(list_factures_payees, (err, result) => {
+            err && console.log(err)
+            res.header(headers);
+            res.status(status);
+            res.json({ message: { type: "info", label: " " }, ...result });
+        });
+    })
+
     .get('/list/factures_impayees_patient/:ipppatient', (req, res) => {
         client.query(list_factures_impayees_patient, [req.params.ipppatient], (err, result) => {
             err && console.log(err)

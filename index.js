@@ -104,6 +104,9 @@ io.sockets.on("connection", function (socket, pseudo) {
         socket.broadcast.emit("valid_paiement", nof, montant)
     })
 
+    socket.on("attente",()=>{
+        socket.broadcast.emit("attente")
+    })
 })
 
 console.log(`start on port : ${port}`);

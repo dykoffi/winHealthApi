@@ -59,6 +59,20 @@ exports.list_all_factures = {
         ORDER BY idFacture`
 }
 
+// exports.list_attentes_paients = {}
+exports.list_all_factures = {
+    name: "list_all_factures",
+    text: `SELECT * FROM 
+    gap.Factures, 
+    gap.Sejours,
+    gap.DossierAdministratif
+    WHERE 
+        patientSejour=idDossier AND
+        sejourFacture=numeroSejour AND
+        typeFacture='original'
+        ORDER BY idFacture`
+}
+
 exports.list_factures_avoir = {
     name: "list_factures_avoir",
     text: `SELECT * FROM 
@@ -78,7 +92,7 @@ exports.list_factures_attentes = {
     gap.Factures, 
     gap.Sejours,
     gap.DossierAdministratif
-    WHERE 
+    WHERE
         patientSejour=idDossier AND
         sejourFacture=numeroSejour AND
         restePatientFacture<>0 AND
@@ -113,6 +127,19 @@ exports.list_factures_payees_patient = {
         ipppatient=$1 AND
         typeFacture='original'
         ORDER BY idFacture`
+}
+
+exports.list_factures_payees = {
+    name: "list_factures_payees",
+    text: `SELECT distinct ipppatient, nompatient, prenomspatient, sexepatient, contactpatient FROM 
+    gap.Factures, 
+    gap.Sejours,
+    gap.DossierAdministratif
+    WHERE 
+        patientSejour=idDossier AND
+        sejourFacture=numeroSejour AND
+        restePatientFacture=0 AND
+        typeFacture='original'`
 }
 
 exports.list_factures_impayees_patient = {
