@@ -1,5 +1,1 @@
-function ascii(char) {
-    return char.length === 1 ? char.charCodeAt(0) : null;
-}
-console.log("e".charCodeAt(0));
-console.log(String.fromCharCode(65));
+console.log(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test("192.168.1.155"));

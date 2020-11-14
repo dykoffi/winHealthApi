@@ -16,7 +16,7 @@ INSERT INTO admin.Profils (
         permissionsProfil
     )
 VALUES (
-        'Admin',
+        'Admin_GAP',
         'COAP001',
         '{"nomapp":"GAP","functions":[{"name":"Accueil","subfunctions":[]},{"name":"Admission","subfunctions":[{"target":"listPatient"},{"target":"dossiersPatient"}]},{"name":"Caisse","subfunctions":[{"target":"attenteFacture"},{"target":"patientFacture"},{"target":"avoirFacture"},{"target":"compte"}]},{"name":"Statistiques","subfunctions":[{"target":"bordereaux"}]},{"name":"Assurance","subfunctions":[{"target":"listeAssurances"},{"target":"facturesRecues"},{"target":"facturesValides"},{"target":"bordereaux"}]}]}'
     ),
@@ -39,6 +39,11 @@ VALUES (
         'Statistique',
         'COAP001',
         '{"nomapp":"GAP","functions":[{"name":"Accueil","subfunctions":[]},{"name":"Statistiques","subfunctions":[{"target":"bordereaux"}]},{"name":"Assurance","subfunctions":[{"target":"listeAssurances"},{"target":"facturesRecues"},{"target":"facturesValides"}]}]}'
+    ),
+    (
+        'Admin',
+        'COAP004',
+        '{"nomapp":"ADMIN","functions":[{"name":"Accueil","subfunctions":[]},{"name":"Statistiques","subfunctions":[{"target":"bordereaux"}]},{"name":"Assurance","subfunctions":[{"target":"listeAssurances"},{"target":"facturesRecues"},{"target":"facturesValides"}]}]}'
     );
 INSERT INTO admin.Users(
         nomUser,
