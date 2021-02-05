@@ -25,4 +25,3 @@ readCSV('./data/actes.csv', function (error, data) {
         client.query(addActes, [d[0], d[1], d[2], d[3], d[4], d[5]], (err, result) => { err && console.log(err); })
     })
 });
-console.log();

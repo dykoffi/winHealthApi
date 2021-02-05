@@ -1,6 +1,6 @@
 const app = require('./app');
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
 const debug = require('debug')('api:server');
 const http = require('http');
 const child = require('child_process');
@@ -94,21 +94,17 @@ io.sockets.on("connection", function (socket, pseudo) {
     socket.on("constantes_add", ({ sejour, patient }) => {
         socket.broadcast.emit("nouveau_patient", { sejour, patient })
     })
-
     socket.on('project_facture', (facture) => {
         console.log("facturation");
         socket.broadcast.emit("project_facture", facture)
     })
-
     socket.on('valid_paiement', (nof, montant) => {
         socket.broadcast.emit("valid_paiement", nof, montant)
     })
-
     socket.on("attente",()=>{
         socket.broadcast.emit("attente")
     })
 })
 
 console.log(`start on port : ${port}`);
-
 module.exports = io

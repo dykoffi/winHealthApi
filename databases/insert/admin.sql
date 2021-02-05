@@ -63,7 +63,7 @@ VALUES (
         'edy@altea-ci.com',
         'Agent ALTEA GAP',
         'Assistance',
-        'Admin',
+        'Admin_GAP',
         'edy',
         md5('admin')
     ),
