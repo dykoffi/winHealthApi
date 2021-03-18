@@ -61,7 +61,7 @@ VALUES (
         'Edy',
         '51 88 64 78',
         'edy@altea-ci.com',
-        'Agent ALTEA GAP',
+        'Agenot ALTEA GAP',
         'Assistance',
         'Admin_GAP',
         'edy',

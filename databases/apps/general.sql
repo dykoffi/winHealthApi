@@ -1,6 +1,10 @@
-DROP SCHEMA general CASCADE;
+DROP SCHEMA general
+CASCADE;
+
 CREATE SCHEMA general;
-CREATE TABLE general.Etablissement (
+
+CREATE TABLE general.Etablissement
+(
     idEtablissement SERIAL PRIMARY KEY,
     regionEtabblissement VARCHAR(100),
     districtEtablissement VARCHAR(100),
@@ -14,11 +18,14 @@ CREATE TABLE general.Etablissement (
     sitewebEtablissement VARCHAR(20),
     logoEtablissement VARCHAR(200)
 );
-CREATE TABLE general.Prix_Actes(
+
+CREATE TABLE general.Prix_Actes
+(
     idPrixActes SERIAL PRIMARY KEY,
     lettreCleActe VARCHAR(10) UNIQUE,
     prixActe INT
 );
+
 CREATE TABLE general.Actes (
     idActe SERIAL PRIMARY KEY,
     codeActe VARCHAR(30) UNIQUE,
@@ -28,8 +35,10 @@ CREATE TABLE general.Actes (
     prixLettreCleActe NUMERIC(10, 2),
     regroupementActe VARCHAR(10),
     cotationActe NUMERIC(10, 2),
-    prixActe NUMERIC(10, 2) GENERATED ALWAYS AS (cotationActe * prixLettreCleActe) STORED
+    prixActe NUMERIC(10, 2) GENERATED ALWAYS AS
+(cotationActe * prixLettreCleActe) STORED
 );
+
 CREATE TABLE general.UniteFonctionnelle ();
 CREATE TABLE general.UniteMedicale ();
 CREATE TABLE general.Chambre ();
