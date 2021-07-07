@@ -9,8 +9,8 @@ if (process.env.DATABASE_URL) {
     client = new Client({
         user: 'psante',
         host: 'localhost',
-        database: 'winhealthapp',
-        password: '7859'
+        database: 'winhealth',
+        password: '1234'
     })
 }
 
